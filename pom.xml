@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <artifactId>sms-smpp</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <groupId>com.telenordigital.sms</groupId>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+    <netty.version>4.1.75.Final</netty.version>
+    <slf4j.version>1.7.36</slf4j.version>
+    <!-- test deps -->
+    <junit.version>5.8.2</junit.version>
+    <ch-smpp.version>5.1.0-113</ch-smpp.version>
+    <awaitility.version>4.2.0</awaitility.version>
+    <logback.version>1.2.11</logback.version>
+    <mockito.version>4.4.0</mockito.version>
+    <assertj.version>3.22.0</assertj.version>
+    <!-- plugins -->
+    <compiler-plugin.version>3.9.0</compiler-plugin.version>
+    <enforcer-plugin.version>3.0.0-M3</enforcer-plugin.version>
+    <spotless-plugin.version>2.21.0</spotless-plugin.version>
+    <surefire-plugin.version>3.0.0-M5</surefire-plugin.version>
+  </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>io.netty</groupId>
+        <artifactId>netty-bom</artifactId>
+        <version>${netty.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <dependencies>
+    <dependency>
+      <groupId>io.netty</groupId>
+      <artifactId>netty-codec</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>io.netty</groupId>
+      <artifactId>netty-transport</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>${slf4j.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>io.netty</groupId>
+      <artifactId>netty-handler</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.restcomm.smpp</groupId>
+      <artifactId>ch-smpp</artifactId>
+      <version>${ch-smpp.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-junit-jupiter</artifactId>
+      <version>${mockito.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <version>${junit.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.awaitility</groupId>
+      <artifactId>awaitility</artifactId>
+      <version>${awaitility.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <version>${logback.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.assertj</groupId>
+      <artifactId>assertj-core</artifactId>
+      <version>${assertj.version}</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>${compiler-plugin.version}</version>
+          <configuration>
+            <source>17</source>
+            <target>17</target>
+            <parameters>true</parameters>
+            <showWarnings>true</showWarnings>
+            <showDeprecation>true</showDeprecation>
+            <failOnWarning>true</failOnWarning>
+            <compilerArgument>-Xlint:unchecked</compilerArgument>
+          </configuration>
+        </plugin>
+        <plugin>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>${surefire-plugin.version}</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-enforcer-plugin</artifactId>
+          <version>${enforcer-plugin.version}</version>
+          <configuration>
+            <rules>
+              <requireMavenVersion>
+                <version>3.8.4</version>
+              </requireMavenVersion>
+              <dependencyConvergence />
+            </rules>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>com.diffplug.spotless</groupId>
+          <artifactId>spotless-maven-plugin</artifactId>
+          <version>${spotless-plugin.version}</version>
+          <executions>
+            <execution>
+              <phase>process-sources</phase>
+              <goals>
+                <goal>check</goal>
+              </goals>
+            </execution>
+          </executions>
+          <configuration>
+            <java>
+              <googleJavaFormat />
+            </java>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+</project>
