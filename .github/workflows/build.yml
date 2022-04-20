@@ -1,6 +1,8 @@
 name: Verify pull request
 
 on:
+  push:
+    branches: [ master ]
   pull_request:
     branches: [ master ]
   workflow_dispatch:
@@ -15,8 +17,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
 
       - name: Set up JDK
         uses: actions/setup-java@v2
@@ -33,6 +33,6 @@ jobs:
 
       - name: Run build
         run: >
-          mvn -ntp -P clean enforcer:enforce package -s $GITHUB_WORKSPACE/settings.xml
+          mvn -ntp clean enforcer:enforce package -s $GITHUB_WORKSPACE/settings.xml
         env:
           GITHUB_TOKEN: ${{ github.token }}
