@@ -1,4 +1,4 @@
-name: Verify pull request
+name: Build
 
 on:
   push:
@@ -23,8 +23,6 @@ jobs:
         with:
           java-version: 17
           distribution: temurin
-          server-id: ghe-tnd
-          settings-path: ${{ github.workspace }}
 
       - name: Set up Maven
         uses: stCarolas/setup-maven@v4
@@ -33,6 +31,6 @@ jobs:
 
       - name: Run build
         run: >
-          mvn -ntp clean enforcer:enforce package -s $GITHUB_WORKSPACE/settings.xml
+          mvn -ntp clean enforcer:enforce package
         env:
           GITHUB_TOKEN: ${{ github.token }}
