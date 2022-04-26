@@ -27,6 +27,6 @@ jobs:
 
       - name: Run build
         run: >
-          mvn -ntp clean enforcer:enforce package
+          mvn -ntp clean license:check-file-header enforcer:enforce package
         env:
           GITHUB_TOKEN: ${{ github.token }}

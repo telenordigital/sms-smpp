@@ -32,6 +32,10 @@ deemed closest to the spirit of the original licence.
  */
 package com.telenordigital.sms.smpp.charset;
 
+/*
+ * %%Ignore-License
+ */
+
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
