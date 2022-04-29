@@ -1,5 +1,7 @@
 # SMPP client
 
+[![Build](https://github.com/telenordigital/sms-smpp/actions/workflows/build.yml/badge.svg)](https://github.com/telenordigital/sms-smpp/actions/workflows/build.yml)
+
 A smpp client library implementing SMPP specification from https://smpp.org.
 
 Uses Netty I/0 asynchronous framework. Requires Java 16.
@@ -15,8 +17,13 @@ Uses Netty I/0 asynchronous framework. Requires Java 16.
 At first, you need to create an instance
 of [SmppConnectionConfig](src/main/java/com/telenordigital/sms/smpp/config/SmppConnectionConfig.java)
 type with necessary configuration parameters. Afterwards, you create an instance
-of [SmppConnectionConfig](src/main/java/com/telenordigital/sms/smpp/SmppConnectionGroup.java). To
+of [SmppConnectionGroup](src/main/java/com/telenordigital/sms/smpp/SmppConnectionGroup.java). To
 providing it with a config instance and the handlers for delivery receipts and SMS MO messages.
 
 See the [complete example](src/test/java/com/telenordigital/sms/smpp/SmppConnectionTester.java) for
 more details.
+
+## License
+
+Code licensed under the Apache License 2.0.
+See [LICENSE file](https://github.com/telenordigital/sms-smpp/blob/master/LICENSE) for terms.
