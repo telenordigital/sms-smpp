@@ -17,8 +17,9 @@ Uses Netty I/0 asynchronous framework. Requires Java 16.
 At first, you need to create an instance
 of [SmppConnectionConfig](src/main/java/com/telenordigital/sms/smpp/config/SmppConnectionConfig.java)
 type with necessary configuration parameters. Afterwards, you create an instance
-of [SmppConnectionGroup](src/main/java/com/telenordigital/sms/smpp/SmppConnectionGroup.java). To
-providing it with a config instance and the handlers for delivery receipts and SMS MO messages.
+of [SmppConnectionGroup](src/main/java/com/telenordigital/sms/smpp/SmppConnectionGroup.java)
+passing the config instance and the handlers for delivery receipts and SMS MO messages as
+constructor parameters
 
 See the [complete example](src/test/java/com/telenordigital/sms/smpp/SmppConnectionTester.java) for
 more details.
