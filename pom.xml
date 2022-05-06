@@ -1,10 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>sms-smpp</artifactId>
   <version>1.1-SNAPSHOT</version>
   <groupId>com.telenordigital.sms</groupId>
+
+  <name>SMPP client library</name>
+  <description>A smpp client library implementing SMPP specification from https://smpp.org.
+  </description>
+  <url>https://github.com/telenordigital/sms-smpp</url>
+
+  <developers>
+    <developer>
+      <name>Alexey Gavrilov</name>
+      <email>agavrilov@telenordigital.com</email>
+      <url>https://github.com/agavrilov76</url>
+    </developer>
+    <developer>
+      <name>Mads Holden</name>
+      <email>mads.holden@telenordigital.com</email>
+      <url>https://github.com/madsholden</url>
+    </developer>
+  </developers>
 
   <organization>
     <name>Telenor Digital</name>
@@ -211,7 +231,7 @@
               <requireMavenVersion>
                 <version>3.8.4</version>
               </requireMavenVersion>
-              <dependencyConvergence />
+              <dependencyConvergence/>
             </rules>
           </configuration>
         </plugin>
@@ -269,7 +289,7 @@
         </executions>
         <configuration>
           <java>
-            <googleJavaFormat />
+            <googleJavaFormat/>
           </java>
         </configuration>
       </plugin>

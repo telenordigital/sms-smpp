@@ -4,7 +4,10 @@
 
 A smpp client library implementing SMPP specification from https://smpp.org.
 
-Uses Netty I/0 asynchronous framework. Requires Java 16.
+Uses Netty I/0 asynchronous framework. Requires the latest Java version.
+
+If you have any questions please raise create a GitHub issue or send an e-mail to this
+[group](mailto:sms-smpp-library@telenordigital.com)
 
 ## Features
 
