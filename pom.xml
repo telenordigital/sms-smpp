@@ -210,13 +210,11 @@
           <artifactId>maven-compiler-plugin</artifactId>
           <version>${compiler-plugin.version}</version>
           <configuration>
-            <source>18</source>
-            <target>18</target>
+            <source>16</source>
+            <target>16</target>
             <parameters>true</parameters>
             <showWarnings>true</showWarnings>
             <showDeprecation>true</showDeprecation>
-            <failOnWarning>true</failOnWarning>
-            <compilerArgument>-Xlint:unchecked</compilerArgument>
           </configuration>
         </plugin>
         <plugin>
