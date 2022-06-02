@@ -222,11 +222,11 @@
           <artifactId>maven-compiler-plugin</artifactId>
           <version>${compiler-plugin.version}</version>
           <configuration>
-            <source>16</source>
-            <target>16</target>
+            <release>16</release>
             <parameters>true</parameters>
             <showWarnings>true</showWarnings>
             <showDeprecation>true</showDeprecation>
+            <failOnWarning>true</failOnWarning>
           </configuration>
         </plugin>
         <plugin>
