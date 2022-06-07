@@ -28,14 +28,13 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.atomic.AtomicInteger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 class OutboundPduHandler extends MessageToMessageCodec<ResponsePdu, RequestResponse<ResponsePdu>> {
+
   private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-  private final AtomicInteger openWindowSlots;
   private final int windowSize;
   private final int timeoutSeconds;
 
@@ -47,7 +46,6 @@ class OutboundPduHandler extends MessageToMessageCodec<ResponsePdu, RequestRespo
       throw new IllegalArgumentException("Window size must be > 0");
     }
 
-    this.openWindowSlots = new AtomicInteger(windowSize);
     this.windowSize = windowSize;
     this.timeoutSeconds = timeoutSeconds;
   }
@@ -72,7 +70,8 @@ class OutboundPduHandler extends MessageToMessageCodec<ResponsePdu, RequestRespo
   }
 
   int getOpenWindowSlots() {
-    return openWindowSlots.get();
+    // this method will be called on a different thread. it is used only for monitoring purpose
+    return windowSize - window.size();
   }
 
   @Override
@@ -88,7 +87,6 @@ class OutboundPduHandler extends MessageToMessageCodec<ResponsePdu, RequestRespo
       msg.completeExceptionally(ctx, "Window is full");
     } else {
       window.put(request.sequenceNumber(), msg);
-      openWindowSlots.decrementAndGet();
       LOG.debug("Sending request: {}. Window size: {}", msg, window.size());
       out.add(request);
     }
@@ -103,7 +101,6 @@ class OutboundPduHandler extends MessageToMessageCodec<ResponsePdu, RequestRespo
       return;
     }
 
-    openWindowSlots.incrementAndGet();
     rr.complete(ctx, msg);
     out.add(msg);
 
