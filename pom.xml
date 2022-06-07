@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>sms-smpp</artifactId>
-  <version>1.1</version>
+  <version>1.2-SNAPSHOT</version>
   <groupId>com.telenordigital.sms</groupId>
 
   <name>SMPP client library</name>
@@ -32,7 +32,7 @@
   <scm>
     <connection>scm:git:git://github.com/telenordigital/sms-smpp</connection>
     <developerConnection>scm:git:git@github.com:telenordigital/sms-smpp</developerConnection>
-    <tag>v1.1</tag>
+    <tag>v1.0</tag>
     <url>https://github.com/telenordigital/sms-smpp</url>
   </scm>
 
