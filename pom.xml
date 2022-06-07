@@ -48,22 +48,22 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-    <netty.version>4.1.75.Final</netty.version>
+    <netty.version>4.1.77.Final</netty.version>
     <slf4j.version>1.7.36</slf4j.version>
     <!-- test deps -->
     <junit.version>5.8.2</junit.version>
     <ch-smpp.version>5.1.0-113</ch-smpp.version>
     <awaitility.version>4.2.0</awaitility.version>
     <logback.version>1.2.11</logback.version>
-    <mockito.version>4.4.0</mockito.version>
-    <assertj.version>3.22.0</assertj.version>
+    <mockito.version>4.6.1</mockito.version>
+    <assertj.version>3.23.1</assertj.version>
     <!-- plugins -->
     <compiler-plugin.version>3.9.0</compiler-plugin.version>
     <enforcer-plugin.version>3.0.0-M3</enforcer-plugin.version>
-    <spotless-plugin.version>2.21.0</spotless-plugin.version>
+    <spotless-plugin.version>2.22.6</spotless-plugin.version>
     <surefire-plugin.version>3.0.0-M5</surefire-plugin.version>
     <license-plugin.version>2.0.0</license-plugin.version>
-    <source-plugin.version>3.2.0</source-plugin.version>
+    <source-plugin.version>3.2.1</source-plugin.version>
     <javadoc-plugin.version>3.4.0</javadoc-plugin.version>
     <deploy-plugin.version>3.0.0-M2</deploy-plugin.version>
     <nexus-plugin.version>1.6.13</nexus-plugin.version>
