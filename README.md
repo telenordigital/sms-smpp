@@ -27,6 +27,17 @@ constructor parameters
 See the [complete example](src/test/java/com/telenordigital/sms/smpp/SmppConnectionTester.java) for
 more details.
 
+## Release
+
+Run Maven release plugin and accept suggested version updates.
+
+    > mvn release:prepare
+
+Once it is done, go to [Releases](https://github.com/telenordigital/sms-smpp/releases) and create a
+new release. This [action](.github/workflows/publish.yaml) will automatically build and upload the
+artifacts to the Maven central. Note: it can take up to an hour for the new release to become
+visible
+
 ## License
 
 Code licensed under the Apache License 2.0.
