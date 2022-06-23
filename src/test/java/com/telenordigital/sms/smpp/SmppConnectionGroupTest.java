@@ -141,7 +141,7 @@ public class SmppConnectionGroupTest {
 
       mockSubmitSmResponse(88, 88); // retry also fails
       final var response1 = group.submit(sms).get();
-      assertThat(response1.result()).isEqualTo(SmppResultCode.RETRIABLE_ERROR);
+      assertThat(response1.result()).isEqualTo(SmppResultCode.RATE_LIMITED);
       assertThat(response1.message()).isEqualTo("ESME_RTHROTTLED: Throttling error");
 
       mockSubmitSmResponse(100);

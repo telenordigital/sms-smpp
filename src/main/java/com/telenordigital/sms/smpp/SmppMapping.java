@@ -51,7 +51,7 @@ final class SmppMapping {
     statusMap.put(
         0x45, new Status("ESME_RSUBMITFAIL", "Generic failure", SmppResultCode.GENERAL_FAILURE));
     statusMap.put(
-        0x58, new Status("ESME_RTHROTTLED", "Throttling error", SmppResultCode.RETRIABLE_ERROR));
+        0x58, new Status("ESME_RTHROTTLED", "Throttling error", SmppResultCode.RATE_LIMITED));
     statusMap.put(
         0x61,
         new Status(
