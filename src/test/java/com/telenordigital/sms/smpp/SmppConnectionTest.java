@@ -58,7 +58,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-@Timeout(10)
+@Timeout(15)
 public class SmppConnectionTest {
   @RegisterExtension public static SmppServerExtension plainServer = new SmppServerExtension(false);
   @RegisterExtension public static SmppServerExtension secureServer = new SmppServerExtension(true);
