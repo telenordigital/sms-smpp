@@ -41,7 +41,9 @@ public record DeliverSm(
     String receiptedMsgId,
     byte state,
     String networkCode,
-    Charset defaultCharset)
+    Charset defaultCharset,
+    Integer mcc,
+    Integer mnc)
     implements RequestPdu<DeliverSmResp> {
 
   private static final Pattern MESSAGE_ID_PATTERN = Pattern.compile("id:([0-9]+)");
@@ -106,6 +108,18 @@ public record DeliverSm(
         opts.getByteArray(TlvTag.NETWORK_ERROR_CODE)
             .map(nc -> "0x%06x".formatted(new BigInteger(1, nc)));
 
+    final var mcc =
+        opts.getString(TlvTag.SRC_SUBADDRESS)
+            .map(s -> s.substring(1, 4))
+            .map(Integer::parseInt)
+            .orElse(null);
+
+    final var mnc =
+        opts.getString(TlvTag.SRC_SUBADDRESS)
+            .map(s -> s.substring(4))
+            .map(Integer::parseInt)
+            .orElse(null);
+
     final var idAndState = getMessageIdAndState(opts, messageArray, dataCoding, defaultCharset);
 
     return new DeliverSm(
@@ -120,7 +134,9 @@ public record DeliverSm(
         idAndState.messageId(),
         idAndState.state(),
         networkCode.orElse(null),
-        defaultCharset);
+        defaultCharset,
+        mcc,
+        mnc);
   }
 
   record MessageIdAndState(String messageId, byte state) {}

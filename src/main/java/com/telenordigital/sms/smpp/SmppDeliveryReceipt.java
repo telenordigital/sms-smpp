@@ -20,4 +20,5 @@ package com.telenordigital.sms.smpp;
  * #L%
  */
 
-public record SmppDeliveryReceipt(String messageId, DeliveryState result, String networkCode) {}
+public record SmppDeliveryReceipt(
+    String messageId, DeliveryState result, String networkCode, Integer mcc, Integer mnc) {}
