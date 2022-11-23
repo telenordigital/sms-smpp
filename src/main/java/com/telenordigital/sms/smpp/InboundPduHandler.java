@@ -94,8 +94,7 @@ class InboundPduHandler extends MessageToMessageDecoder<RequestPdu<?>> {
                           deliverSm.receiptedMsgId(),
                           s,
                           deliverSm.networkCode(),
-                          deliverSm.mcc(),
-                          deliverSm.mnc()))
+                          deliverSm.srcSubAddress()))
               .map(
                   dr ->
                       parent
