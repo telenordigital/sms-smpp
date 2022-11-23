@@ -21,12 +21,12 @@ jobs:
           distribution: temurin
 
       - name: Set up Maven
-        uses: stCarolas/setup-maven@v4
+        uses: stCarolas/setup-maven@v4.5
         with:
-          maven-version: 3.8.4
+          maven-version: 3.8.6
 
       - name: Run build
         run: >
-          mvn -ntp clean license:check-file-header enforcer:enforce package
+          mvn -ntp clean license:check-file-header -Dlicense.failOnMissingHeader=true enforcer:enforce package
         env:
           GITHUB_TOKEN: ${{ github.token }}
