@@ -22,6 +22,7 @@ package com.telenordigital.sms.smpp.pdu;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.telenordigital.sms.smpp.SubAddress;
 import com.telenordigital.sms.smpp.charset.GsmCharset;
 import io.netty.buffer.ByteBufUtil;
 import io.netty.buffer.Unpooled;

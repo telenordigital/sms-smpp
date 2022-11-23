@@ -20,7 +20,5 @@ package com.telenordigital.sms.smpp;
  * #L%
  */
 
-import com.telenordigital.sms.smpp.pdu.SubAddress;
-
 public record SmppDeliveryReceipt(
     String messageId, DeliveryState result, String networkCode, SubAddress srcSubAddress) {}
