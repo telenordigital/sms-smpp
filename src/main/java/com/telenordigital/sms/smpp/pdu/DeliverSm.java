@@ -20,6 +20,7 @@ package com.telenordigital.sms.smpp.pdu;
  * #L%
  */
 
+import com.telenordigital.sms.smpp.SubAddress;
 import com.telenordigital.sms.smpp.charset.GsmCharset;
 import io.netty.buffer.ByteBuf;
 import java.math.BigInteger;

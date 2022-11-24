@@ -1,4 +1,4 @@
-package com.telenordigital.sms.smpp.pdu;
+package com.telenordigital.sms.smpp;
 
 /*-
  * #%L
