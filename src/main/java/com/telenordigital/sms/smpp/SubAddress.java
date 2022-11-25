@@ -29,7 +29,7 @@ import java.util.Optional;
  * @param mnc Mobile network code
  */
 public record SubAddress(int mcc, int mnc) {
-  public static Optional<SubAddress> create(final String input) {
+  public static Optional<SubAddress> parse(final String input) {
     if (input.length() != 7) {
       return Optional.empty();
     }

@@ -38,7 +38,7 @@ public record SubmitSmResp(
 
     final var opts = PduUtil.readOptionalParams(buf);
     final var destSubAddress =
-        opts.getString(TlvTag.DEST_SUBADDRESS).flatMap(SubAddress::create).orElse(null);
+        opts.getString(TlvTag.DEST_SUBADDRESS).flatMap(SubAddress::parse).orElse(null);
 
     return new SubmitSmResp(status, sequence, messageId, destSubAddress);
   }
