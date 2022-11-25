@@ -58,7 +58,7 @@ class PduDecoder extends ByteToMessageDecoder {
               if (in.readableBytes() > 0) {
                 LOG.warn(
                     "Finished reading PDU {}, but there are still {} readable bytes left",
-                    Integer.toHexString(id),
+                    command,
                     in.readableBytes());
                 skipReadableBytes(in);
               }
