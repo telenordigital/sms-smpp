@@ -21,21 +21,26 @@ package com.telenordigital.sms.smpp;
  */
 
 public record SmppResponse(
-    SmppResultCode result, String reference, String message, String details) {
+    SmppResultCode result,
+    String reference,
+    String message,
+    String details,
+    SubAddress destSubAddress) {
 
   public static SmppResponse success(final String reference) {
-    return new SmppResponse(SmppResultCode.SUCCESS, reference, null, null);
+    return new SmppResponse(SmppResultCode.SUCCESS, reference, null, null, null);
   }
 
   public static SmppResponse retriableError(final String message, final String details) {
-    return new SmppResponse(SmppResultCode.RETRIABLE_ERROR, null, message, details);
+    return new SmppResponse(SmppResultCode.RETRIABLE_ERROR, null, message, details, null);
   }
 
   public static SmppResponse routeDown(final String message, final String details) {
-    return new SmppResponse(SmppResultCode.RETRIABLE_ERROR_ROUTE_DOWN, null, message, details);
+    return new SmppResponse(
+        SmppResultCode.RETRIABLE_ERROR_ROUTE_DOWN, null, message, details, null);
   }
 
   public static SmppResponse failure(final String message, final String details) {
-    return new SmppResponse(SmppResultCode.GENERAL_FAILURE, null, message, details);
+    return new SmppResponse(SmppResultCode.GENERAL_FAILURE, null, message, details, null);
   }
 }

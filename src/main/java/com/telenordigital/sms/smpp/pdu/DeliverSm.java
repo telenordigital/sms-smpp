@@ -109,12 +109,7 @@ public record DeliverSm(
             .map(nc -> "0x%06x".formatted(new BigInteger(1, nc)));
 
     final var srcSubAddress =
-        opts.getString(TlvTag.SRC_SUBADDRESS)
-            .map(
-                s ->
-                    new SubAddress(
-                        Integer.parseInt(s.substring(1, 4)), Integer.parseInt(s.substring(4))))
-            .orElse(null);
+        opts.getString(TlvTag.SRC_SUBADDRESS).flatMap(SubAddress::create).orElse(null);
 
     final var idAndState = getMessageIdAndState(opts, messageArray, dataCoding, defaultCharset);
 

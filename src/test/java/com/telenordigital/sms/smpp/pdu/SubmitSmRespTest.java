@@ -22,6 +22,7 @@ package com.telenordigital.sms.smpp.pdu;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.telenordigital.sms.smpp.SubAddress;
 import io.netty.buffer.ByteBufUtil;
 import io.netty.buffer.Unpooled;
 import org.junit.jupiter.api.Test;
@@ -40,6 +41,21 @@ public class SubmitSmRespTest extends PduTest {
     assertThat(resp.commandStatus()).isEqualTo(0);
     assertThat(resp.sequenceNumber()).isEqualTo(171192033);
     assertThat(resp.messageId()).isEqualTo("94258431594");
+  }
+
+  @Test
+  public void testSubAddress() {
+    final var encoded = "0000002480000004000000000000000336453834464330340002030007a0323432303130";
+    final byte[] bytes = ByteBufUtil.decodeHexDump(encoded);
+
+    final var buf = Unpooled.copiedBuffer(bytes);
+    // Simulate netty reading the command length and command id
+    buf.readBytes(8);
+
+    final SubmitSmResp resp = SubmitSmResp.deserialize(buf);
+    assertThat(resp.commandStatus()).isEqualTo(0);
+    assertThat(resp.messageId()).isEqualTo("6E84FC04");
+    assertThat(resp.destSubAddress()).isEqualTo(new SubAddress(242, 10));
   }
 
   @Test

@@ -142,7 +142,7 @@ public record SubmitSm(
   }
 
   @Override
-  public SubmitSmResp createResponse(int commandStatus) {
-    return new SubmitSmResp(commandStatus, sequenceNumber, "TODO");
+  public SubmitSmResp createResponse(final int commandStatus) {
+    return new SubmitSmResp(commandStatus, sequenceNumber, "TODO", null);
   }
 }

@@ -20,10 +20,22 @@ package com.telenordigital.sms.smpp;
  * #L%
  */
 
+import java.util.Optional;
+
 /**
  * For source_subaddress or dest_subaddress in deliver_sm
  *
  * @param mcc Mobile country code
  * @param mnc Mobile network code
  */
-public record SubAddress(int mcc, int mnc) {}
+public record SubAddress(int mcc, int mnc) {
+  public static Optional<SubAddress> create(final String input) {
+    if (input.length() != 7) {
+      return Optional.empty();
+    }
+    final var result =
+        new SubAddress(
+            Integer.parseInt(input.substring(1, 4)), Integer.parseInt(input.substring(4)));
+    return Optional.of(result);
+  }
+}

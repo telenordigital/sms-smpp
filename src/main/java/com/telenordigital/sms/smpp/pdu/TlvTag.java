@@ -32,6 +32,7 @@ public enum TlvTag {
   MESSAGE_STATE((short) 0x0427, TlvType.BYTE),
   NETWORK_ERROR_CODE((short) 0x0423, TlvType.BYTE_ARRAY),
   SRC_SUBADDRESS((short) 0x0202, TlvType.OCTET_STRING),
+  DEST_SUBADDRESS((short) 0x0203, TlvType.OCTET_STRING),
   ;
 
   static Map<Short, TlvTag> tagMap =
