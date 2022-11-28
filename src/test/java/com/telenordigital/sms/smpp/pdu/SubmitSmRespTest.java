@@ -43,6 +43,21 @@ public class SubmitSmRespTest extends PduTest {
   }
 
   @Test
+  public void testSubAddress() {
+    final var encoded = "0000002480000004000000000000000336453834464330340002030007a0323432303130";
+    final byte[] bytes = ByteBufUtil.decodeHexDump(encoded);
+
+    final var buf = Unpooled.copiedBuffer(bytes);
+    // Simulate netty reading the command length and command id
+    buf.readBytes(8);
+
+    final SubmitSmResp resp = SubmitSmResp.deserialize(buf);
+    assertThat(resp.commandStatus()).isEqualTo(0);
+    assertThat(resp.messageId()).isEqualTo("6E84FC04");
+    assertThat(resp.destSubAddress()).isEqualTo("242010");
+  }
+
+  @Test
   public void testDeserializeFailed() {
     final var encoded = "00000010800000040000000b00019dba";
     final byte[] bytes = ByteBufUtil.decodeHexDump(encoded);

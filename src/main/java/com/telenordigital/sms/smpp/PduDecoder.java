@@ -53,18 +53,28 @@ class PduDecoder extends ByteToMessageDecoder {
     Command.valueOf(id)
         .ifPresentOrElse(
             command -> {
-              final var pdu = mapPdu(command, in, defaultCharset);
+              final var pdu = mapPdu(command, in);
               out.add(pdu);
+              if (in.readableBytes() > 0) {
+                LOG.warn(
+                    "Finished reading PDU {}, but there are still {} readable bytes left",
+                    command,
+                    in.readableBytes());
+                skipReadableBytes(in);
+              }
             },
             () -> {
               // TODO: reply with unknown command response
-              LOG.warn("Unknown command: {}", id);
+              LOG.warn(
+                  "Unknown command: {}, skipping remaining {} bytes",
+                  Integer.toHexString(id),
+                  in.readableBytes());
               // skip the rest
               skipReadableBytes(in);
             });
   }
 
-  private static Pdu mapPdu(final Command command, final ByteBuf in, final Charset defaultCharset) {
+  private Pdu mapPdu(final Command command, final ByteBuf in) {
     switch (command) {
       case BIND_RECEIVER_RESP:
       case BIND_TRANCEIVER_RESP:

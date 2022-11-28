@@ -112,7 +112,8 @@ public class SmppConnectionGroup implements Closeable {
                     status.result(),
                     resp.messageId(),
                     status.name() + ": " + status.message(),
-                    status.isSuccessful() ? null : details))
+                    status.isSuccessful() ? null : details,
+                    resp.destSubAddress()))
         .orElse(SmppResponse.failure("Unknown command status", details));
   }
 

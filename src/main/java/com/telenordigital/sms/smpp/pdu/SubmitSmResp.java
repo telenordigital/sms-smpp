@@ -22,7 +22,8 @@ package com.telenordigital.sms.smpp.pdu;
 
 import io.netty.buffer.ByteBuf;
 
-public record SubmitSmResp(int commandStatus, int sequenceNumber, String messageId)
+public record SubmitSmResp(
+    int commandStatus, int sequenceNumber, String messageId, String destSubAddress)
     implements ResponsePdu {
   @Override
   public Command command() {
@@ -33,6 +34,14 @@ public record SubmitSmResp(int commandStatus, int sequenceNumber, String message
     final int status = buf.readInt();
     final int sequence = buf.readInt();
     final String messageId = PduUtil.readCString(buf);
-    return new SubmitSmResp(status, sequence, messageId);
+
+    final var opts = PduUtil.readOptionalParams(buf);
+    final var destSubAddress =
+        opts.getString(TlvTag.DEST_SUBADDRESS)
+            .filter(s -> s.length() == 6 || s.length() == 7)
+            .map(s -> s.substring(1))
+            .orElse(null);
+
+    return new SubmitSmResp(status, sequence, messageId, destSubAddress);
   }
 }

@@ -74,7 +74,7 @@ public class SmppConnectionTester {
             List.of(config),
             SmppConnectionTester::handleDelivery,
             mo -> new CompletableFuture<>())) {
-      await().atMost(5, TimeUnit.SECONDS).until(() -> group.getNumberOfActiveConnections() > 0);
+      await().atMost(60, TimeUnit.SECONDS).until(() -> group.getNumberOfActiveConnections() > 0);
 
       final var sms = new SmppSmsMt(sender, msisdn, "Test message. Delivery2", null);
       final var messageId = group.submit(sms).get(20, TimeUnit.SECONDS);
