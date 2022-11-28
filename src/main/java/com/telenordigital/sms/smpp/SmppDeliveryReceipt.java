@@ -20,5 +20,11 @@ package com.telenordigital.sms.smpp;
  * #L%
  */
 
+/**
+ * @param messageId
+ * @param result
+ * @param networkCode
+ * @param srcSubAddress The PLMN, aka the MCC and MNC concatenated
+ */
 public record SmppDeliveryReceipt(
-    String messageId, DeliveryState result, String networkCode, SubAddress srcSubAddress) {}
+    String messageId, DeliveryState result, String networkCode, String srcSubAddress) {}

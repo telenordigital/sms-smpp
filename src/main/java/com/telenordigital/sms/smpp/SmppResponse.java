@@ -20,12 +20,19 @@ package com.telenordigital.sms.smpp;
  * #L%
  */
 
+/**
+ * @param result
+ * @param reference
+ * @param message
+ * @param details
+ * @param destSubAddress The PLMN, aka the MCC and MNC concatenated
+ */
 public record SmppResponse(
     SmppResultCode result,
     String reference,
     String message,
     String details,
-    SubAddress destSubAddress) {
+    String destSubAddress) {
 
   public static SmppResponse success(final String reference) {
     return new SmppResponse(SmppResultCode.SUCCESS, reference, null, null, null);

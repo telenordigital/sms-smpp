@@ -22,7 +22,6 @@ package com.telenordigital.sms.smpp.pdu;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.telenordigital.sms.smpp.SubAddress;
 import io.netty.buffer.ByteBufUtil;
 import io.netty.buffer.Unpooled;
 import org.junit.jupiter.api.Test;
@@ -55,7 +54,7 @@ public class SubmitSmRespTest extends PduTest {
     final SubmitSmResp resp = SubmitSmResp.deserialize(buf);
     assertThat(resp.commandStatus()).isEqualTo(0);
     assertThat(resp.messageId()).isEqualTo("6E84FC04");
-    assertThat(resp.destSubAddress()).isEqualTo(new SubAddress(242, 10));
+    assertThat(resp.destSubAddress()).isEqualTo("242010");
   }
 
   @Test

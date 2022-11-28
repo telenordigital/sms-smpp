@@ -22,7 +22,6 @@ package com.telenordigital.sms.smpp.pdu;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.telenordigital.sms.smpp.SubAddress;
 import com.telenordigital.sms.smpp.charset.GsmCharset;
 import io.netty.buffer.ByteBufUtil;
 import io.netty.buffer.Unpooled;
@@ -69,7 +68,7 @@ public class DeliverSmTest extends PduTest {
 
     assertThat(pdu.isDeliveryReceipt()).isTrue();
     assertThat(pdu.sender().address()).isEqualTo("4711111111");
-    assertThat(pdu.srcSubAddress()).isEqualTo(new SubAddress(242, 10));
+    assertThat(pdu.srcSubAddress()).isEqualTo("242010");
   }
 
   @Test

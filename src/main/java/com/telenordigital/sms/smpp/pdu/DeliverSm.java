@@ -20,7 +20,6 @@ package com.telenordigital.sms.smpp.pdu;
  * #L%
  */
 
-import com.telenordigital.sms.smpp.SubAddress;
 import com.telenordigital.sms.smpp.charset.GsmCharset;
 import io.netty.buffer.ByteBuf;
 import java.math.BigInteger;
@@ -43,7 +42,7 @@ public record DeliverSm(
     byte state,
     String networkCode,
     Charset defaultCharset,
-    SubAddress srcSubAddress)
+    String srcSubAddress)
     implements RequestPdu<DeliverSmResp> {
 
   private static final Pattern MESSAGE_ID_PATTERN = Pattern.compile("id:([0-9]+)");
@@ -109,7 +108,10 @@ public record DeliverSm(
             .map(nc -> "0x%06x".formatted(new BigInteger(1, nc)));
 
     final var srcSubAddress =
-        opts.getString(TlvTag.SRC_SUBADDRESS).flatMap(SubAddress::parse).orElse(null);
+        opts.getString(TlvTag.SRC_SUBADDRESS)
+            .filter(s -> s.length() == 6 || s.length() == 7)
+            .map(s -> s.substring(1))
+            .orElse(null);
 
     final var idAndState = getMessageIdAndState(opts, messageArray, dataCoding, defaultCharset);
 
