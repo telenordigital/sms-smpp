@@ -5,3 +5,6 @@ updates:
     schedule:
       interval: "weekly"
       open-pull-requests-limit: 10
+    reviewers:
+      - "agavrilov76"
+      - "madsholden"
