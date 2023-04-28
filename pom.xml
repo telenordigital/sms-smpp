@@ -54,7 +54,7 @@
     <junit.version>5.9.3</junit.version>
     <ch-smpp.version>5.1.0-113</ch-smpp.version>
     <awaitility.version>4.2.0</awaitility.version>
-    <logback.version>1.4.6</logback.version>
+    <logback.version>1.4.7</logback.version>
     <mockito.version>5.3.1</mockito.version>
     <assertj.version>3.24.2</assertj.version>
     <!-- plugins -->
