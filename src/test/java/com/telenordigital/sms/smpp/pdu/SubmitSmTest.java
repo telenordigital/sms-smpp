@@ -32,12 +32,7 @@ public class SubmitSmTest extends PduTest {
   @Test
   public void testBom() {
     final var pdu =
-        SubmitSm.create(
-            Clock.systemUTC(),
-            "40404",
-            "44951361920",
-            "6718 e vashiat PIN for 360VRTUBE - седмичен абонамент. Ne go spodelqite.",
-            null);
+        SubmitSm.create(Clock.systemUTC(), "40404", "44951361920", "седмичен абонамент", null);
     final var msg = pdu.encodedShortMessage();
     final var hex = serialize(msg);
     assertThat(hex).doesNotStartWith("feff");
