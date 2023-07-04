@@ -20,6 +20,7 @@ package com.telenordigital.sms.smpp.pdu;
  * #L%
  */
 
+import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufUtil;
 import io.netty.buffer.Unpooled;
 
@@ -27,6 +28,16 @@ public class PduTest {
   protected static String serialize(final Pdu pdu) {
     final var buf = Unpooled.buffer();
     pdu.serialize(buf);
+    return serialize(buf);
+  }
+
+  protected static String serialize(final ByteArray byteArray) {
+    final var buf = Unpooled.buffer();
+    buf.writeBytes(byteArray.array());
+    return serialize(buf);
+  }
+
+  private static String serialize(final ByteBuf buf) {
     final var length = buf.readableBytes();
     final var bytes = new byte[length];
     buf.readBytes(bytes);

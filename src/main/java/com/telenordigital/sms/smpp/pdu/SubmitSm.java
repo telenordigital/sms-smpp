@@ -109,7 +109,7 @@ public record SubmitSm(
         throw new IllegalArgumentException("Message contents is outside the BMP");
       }
     }
-    return StandardCharsets.UTF_16;
+    return StandardCharsets.UTF_16BE;
   }
 
   @Override

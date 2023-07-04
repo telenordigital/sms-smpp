@@ -30,6 +30,20 @@ import org.junit.jupiter.api.Test;
 
 public class SubmitSmTest extends PduTest {
   @Test
+  public void testBom() {
+    final var pdu =
+        SubmitSm.create(
+            Clock.systemUTC(),
+            "40404",
+            "44951361920",
+            "6718 e vashiat PIN for 360VRTUBE - седмичен абонамент. Ne go spodelqite.",
+            null);
+    final var msg = pdu.encodedShortMessage();
+    final var hex = serialize(msg);
+    assertThat(hex).doesNotStartWith("feff");
+  }
+
+  @Test
   public void testSerialize() {
     Sequencer.sequence.set(20456);
     final var pdu = SubmitSm.create(Clock.systemUTC(), "40404", "44951361920", "¡¤#!%&/:", null);
