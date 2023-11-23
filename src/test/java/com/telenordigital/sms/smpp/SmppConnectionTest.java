@@ -92,6 +92,8 @@ public class SmppConnectionTest {
             "",
             false,
             null,
+            null,
+            null,
             100);
     final var trustedCerts =
         Objects.requireNonNull(getClass().getResourceAsStream("cloudhopper-cert.pem"))
@@ -114,6 +116,8 @@ public class SmppConnectionTest {
             "",
             true,
             trustedCerts,
+            null,
+            null,
             100);
 
     receivedMo = new CompletableFuture<>();
@@ -370,6 +374,8 @@ public class SmppConnectionTest {
             "",
             false,
             null,
+            null,
+            null,
             100);
     try (var connection = new SmppConnection(idleConfig, moHandler, drHandler)) {
       waitUntilActive(connection, 4);
@@ -399,6 +405,8 @@ public class SmppConnectionTest {
             "test",
             "",
             false,
+            null,
+            null,
             null,
             100);
     try (var connection = new SmppConnection(idleConfig, moHandler, drHandler)) {
@@ -548,6 +556,8 @@ public class SmppConnectionTest {
             "",
             false,
             null,
+            null,
+            null,
             2);
     try (var connection = new SmppConnection(smallWindow, moHandler, drHandler)) {
       waitUntilActive(connection, 4);
@@ -601,6 +611,8 @@ public class SmppConnectionTest {
             "test",
             "",
             false,
+            null,
+            null,
             null,
             100);
     try (var connection = new SmppConnection(lowTimeout, moHandler, drHandler)) {
@@ -666,6 +678,8 @@ public class SmppConnectionTest {
             "",
             false,
             null,
+            null,
+            null,
             100);
 
     try (var connection =
@@ -713,6 +727,8 @@ public class SmppConnectionTest {
             "don't accept me for the first time",
             "",
             false,
+            null,
+            null,
             null,
             100);
 
