@@ -100,6 +100,8 @@ class SmppConnection implements Closeable {
                         channel,
                         config.useTls(),
                         config.trustedCerts(),
+                        config.clientCert(),
+                        config.clientKey(),
                         config.defaultEncoding().charset);
                   }
                 });
@@ -177,12 +179,20 @@ class SmppConnection implements Closeable {
     }
   }
 
-  private void addSslHandler(final SocketChannel channel, final byte[] trustedCerts) {
+  private void addSslHandler(
+      final SocketChannel channel,
+      final byte[] trustedCerts,
+      final byte[] clientCert,
+      final byte[] clientKey) {
     try {
       final var sslContext = SslContextBuilder.forClient();
 
       if (trustedCerts != null) {
         sslContext.trustManager(new ByteArrayInputStream(trustedCerts));
+      }
+      if (clientCert != null) {
+        sslContext.keyManager(
+            new ByteArrayInputStream(clientCert), new ByteArrayInputStream(clientKey));
       }
       final var engine = sslContext.build().newEngine(channel.alloc());
 
@@ -196,9 +206,11 @@ class SmppConnection implements Closeable {
       final SocketChannel channel,
       final boolean useSsl,
       final byte[] trustedCerts,
+      final byte[] clientCert,
+      final byte[] clientKey,
       final Charset defaultCharset) {
     if (useSsl) {
-      addSslHandler(channel, trustedCerts);
+      addSslHandler(channel, trustedCerts, clientCert, clientKey);
     }
 
     outboundPduHandler =

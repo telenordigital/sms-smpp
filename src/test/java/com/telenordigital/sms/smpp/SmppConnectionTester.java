@@ -65,6 +65,8 @@ public class SmppConnectionTester {
             systemType,
             ssl,
             null,
+            null,
+            null,
             10);
 
     try (var group =

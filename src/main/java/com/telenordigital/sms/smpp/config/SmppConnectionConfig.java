@@ -43,6 +43,8 @@ public record SmppConnectionConfig(
     String systemType,
     boolean useTls,
     byte[] trustedCerts,
+    byte[] clientCert,
+    byte[] clientKey,
     int windowSize) {
 
   public SmppConnectionConfig(String host, int port, int reconnectTimeSeconds, int numberOfBinds) {
@@ -61,6 +63,8 @@ public record SmppConnectionConfig(
         null,
         null,
         false,
+        null,
+        null,
         null,
         100);
   }
