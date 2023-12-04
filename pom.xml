@@ -64,7 +64,7 @@
     <surefire-plugin.version>3.1.2</surefire-plugin.version>
     <license-plugin.version>2.2.0</license-plugin.version>
     <source-plugin.version>3.3.0</source-plugin.version>
-    <javadoc-plugin.version>3.5.0</javadoc-plugin.version>
+    <javadoc-plugin.version>3.6.3</javadoc-plugin.version>
     <deploy-plugin.version>3.1.1</deploy-plugin.version>
     <nexus-plugin.version>1.6.13</nexus-plugin.version>
     <release-plugin.version>3.0.1</release-plugin.version>
