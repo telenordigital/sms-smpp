@@ -60,6 +60,7 @@ public class BindRespTest {
     assertThat(resp.systemId()).isEqualTo("twitter");
     assertThat(resp.sequenceNumber()).isEqualTo(235874);
     assertThat(resp.commandStatus()).isEqualTo(0);
+    assertThat(resp.status()).isEqualTo("OK[0x00]");
     assertThat(resp.interfaceVersion()).isEqualTo((byte) 0x34);
   }
 
@@ -69,7 +70,18 @@ public class BindRespTest {
     final byte[] bytes = ByteBufUtil.decodeHexDump(encoded);
     final var buf = Unpooled.copiedBuffer(bytes);
     buf.readBytes(8);
-    BindResp.deserialize(Command.BIND_RECEIVER_RESP, buf);
+    final var resp = BindResp.deserialize(Command.BIND_RECEIVER_RESP, buf);
+    assertThat(resp.status()).isEqualTo("BIND_FAILED[0x0D]");
+  }
+
+  @Test
+  public void bindFailedUnknownError() {
+    final var encoded = "00000010800000090000001d00000001";
+    final byte[] bytes = ByteBufUtil.decodeHexDump(encoded);
+    final var buf = Unpooled.copiedBuffer(bytes);
+    buf.readBytes(8);
+    final var resp = BindResp.deserialize(Command.BIND_RECEIVER_RESP, buf);
+    assertThat(resp.status()).isEqualTo("UNKNOWN[0x1D]");
   }
 
   @Test
