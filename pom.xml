@@ -58,7 +58,7 @@
     <mockito.version>5.4.0</mockito.version>
     <assertj.version>3.24.2</assertj.version>
     <!-- plugins -->
-    <compiler-plugin.version>3.11.0</compiler-plugin.version>
+    <compiler-plugin.version>3.12.1</compiler-plugin.version>
     <enforcer-plugin.version>3.3.0</enforcer-plugin.version>
     <spotless-plugin.version>2.37.0</spotless-plugin.version>
     <surefire-plugin.version>3.1.2</surefire-plugin.version>
