@@ -62,7 +62,7 @@
     <enforcer-plugin.version>3.3.0</enforcer-plugin.version>
     <spotless-plugin.version>2.37.0</spotless-plugin.version>
     <surefire-plugin.version>3.1.2</surefire-plugin.version>
-    <license-plugin.version>2.2.0</license-plugin.version>
+    <license-plugin.version>2.4.0</license-plugin.version>
     <source-plugin.version>3.3.0</source-plugin.version>
     <javadoc-plugin.version>3.5.0</javadoc-plugin.version>
     <deploy-plugin.version>3.1.1</deploy-plugin.version>
