@@ -145,7 +145,7 @@ class SmppConnection implements Closeable {
           stateChange(SmppState.ACTIVE);
           LOG.info("Successfully bound to: {}", config.systemId());
         } else {
-          LOG.warn("Invalid bind response status: {}", bindResp.commandStatus());
+          LOG.warn("Invalid bind response status: {}", bindResp.status());
           ctx.channel().close();
         }
       }
