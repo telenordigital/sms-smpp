@@ -20,6 +20,7 @@ package com.telenordigital.sms.smpp.pdu;
  * #L%
  */
 
+import com.telenordigital.sms.smpp.charset.GsmCharset;
 import io.netty.buffer.ByteBuf;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -100,7 +101,11 @@ public record SubmitSm(
   }
 
   private static Charset getCharset(final String message) {
-    if (StandardCharsets.ISO_8859_1.newEncoder().canEncode(message)) {
+    // Some SMSCs will convert a Latin1 encoded message to GSM encoding, even if the
+    // message is not representable using GSM. This results in any characters that
+    // are in Latin1, but not in GSM, to be dropped from the message.
+    if (StandardCharsets.ISO_8859_1.newEncoder().canEncode(message)
+        && GsmCharset.GSM.canRepresent(message)) {
       return StandardCharsets.ISO_8859_1;
     }
 
