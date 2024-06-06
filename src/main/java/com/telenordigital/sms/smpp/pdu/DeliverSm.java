@@ -45,6 +45,7 @@ public record DeliverSm(
     String srcSubAddress)
     implements RequestPdu<DeliverSmResp> {
 
+  private static final Pattern HEX_MESSAGE_ID_PATTERN = Pattern.compile("id:([A-Fa-f0-9]+)");
   private static final Pattern MESSAGE_ID_PATTERN = Pattern.compile("id:([0-9]+)");
   private static final Pattern STATE_PATTERN = Pattern.compile("stat:([A-Z]+)");
   private static final byte DELIVERY_RECEIPT_ESM_CLASS = 0x04;
@@ -163,9 +164,13 @@ public record DeliverSm(
     if (matcher.find()) {
       final var decimal = Long.parseLong(matcher.group(1), 10);
       return Long.toString(decimal, 16).toUpperCase(Locale.ROOT);
-    } else {
-      return null;
     }
+
+    final var hexMatcher = HEX_MESSAGE_ID_PATTERN.matcher(message);
+    if (hexMatcher.find()) {
+      return hexMatcher.group(1);
+    }
+    return null;
   }
 
   private static byte parseStateFromMessage(final String message) {
