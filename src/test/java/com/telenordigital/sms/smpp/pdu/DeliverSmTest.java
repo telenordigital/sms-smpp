@@ -108,6 +108,20 @@ public class DeliverSmTest extends PduTest {
   }
 
   @Test
+  public void testTeliaDk2() {
+    // Telia DK sends delivery receipts with IDs in the message, already hex encoded
+
+    final var encoded =
+        "000000ba000000050000000000000001736d7367770001013435323735383433373300010131393731000400000000000003008669643a37453832393132463530453434423035384539413146444542343144363742333031207375623a30303120646c7672643a303031207375626d697420646174653a3234303630373130343420646f6e6520646174653a3234303630373130343420737461743a44454c49565244206572723a30303020746578743a6131312020454e44";
+    final var pdu = deserialize(encoded, GsmCharset.GSM);
+
+    assertThat(pdu.destination().address()).isEqualTo("1971");
+    assertThat(pdu.sender().address()).isEqualTo("4527584373");
+    assertThat(pdu.receiptedMsgId()).isEqualTo("7E82912F50E44B058E9A1FDEB41D67B301");
+    assertThat(pdu.state()).isEqualTo((byte) 2);
+  }
+
+  @Test
   public void testTeliaDk() {
     // Telia DK sends delivery receipts with IDs in the message, already hex encoded
 
