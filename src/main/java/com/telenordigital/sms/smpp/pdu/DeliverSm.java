@@ -25,6 +25,7 @@ import io.netty.buffer.ByteBuf;
 import java.math.BigInteger;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.regex.Pattern;
@@ -42,13 +43,17 @@ public record DeliverSm(
     byte state,
     String networkCode,
     Charset defaultCharset,
-    String srcSubAddress)
+    String srcSubAddress,
+    String concatenatedRef,
+    int part,
+    int numberOfParts)
     implements RequestPdu<DeliverSmResp> {
 
   private static final Pattern HEX_MESSAGE_ID_PATTERN = Pattern.compile("id:([A-Fa-f0-9]+) ");
   private static final Pattern MESSAGE_ID_PATTERN = Pattern.compile("id:([0-9]+) ");
   private static final Pattern STATE_PATTERN = Pattern.compile("stat:([A-Z]+)");
   private static final byte DELIVERY_RECEIPT_ESM_CLASS = 0x04;
+  private static final byte MULTIPART_MO_ESM_CLASS = 0x40;
 
   @Override
   public Command command() {
@@ -101,7 +106,39 @@ public record DeliverSm(
     final var smLength = buf.readUnsignedByte();
     final var messageBytes = new byte[smLength];
     buf.readBytes(messageBytes);
-    final var messageArray = new ByteArray(messageBytes);
+
+    final ByteArray messageArray;
+    final String concatenatedRef;
+    final int numberOfParts;
+    final int part;
+
+    if (esmClass == MULTIPART_MO_ESM_CLASS) {
+      // The first bytes of the message has UDH data, which needs to be parsed.
+      // The SMPP spec does not contain info on how to parse this, but it can
+      // be found on Wikipedia:
+      // https://en.wikipedia.org/wiki/Concatenated_SMS
+      final byte udhLength = messageBytes[0];
+      final byte identifier = messageBytes[1];
+      if (identifier == 0x0) {
+        // single byte identifier
+        concatenatedRef = "%X".formatted(messageBytes[3]);
+      } else if (identifier == 0x04) {
+        // two byte identifier
+        concatenatedRef = "%X%X".formatted(messageBytes[3], messageBytes[4]);
+      } else {
+        concatenatedRef = null;
+      }
+      numberOfParts = messageBytes[udhLength - 1];
+      part = messageBytes[udhLength];
+
+      messageArray =
+          new ByteArray(Arrays.copyOfRange(messageBytes, udhLength + 1, messageBytes.length));
+    } else {
+      concatenatedRef = null;
+      numberOfParts = 1;
+      part = 1;
+      messageArray = new ByteArray(messageBytes);
+    }
 
     final var opts = PduUtil.readOptionalParams(buf);
     final var networkCode =
@@ -129,7 +166,10 @@ public record DeliverSm(
         idAndState.state(),
         networkCode.orElse(null),
         defaultCharset,
-        srcSubAddress);
+        srcSubAddress,
+        concatenatedRef,
+        part,
+        numberOfParts);
   }
 
   record MessageIdAndState(String messageId, byte state) {}
