@@ -112,7 +112,12 @@ class InboundPduHandler extends MessageToMessageDecoder<RequestPdu<?>> {
     } else {
       final var mo =
           new SmppSmsMo(
-              deliverSm.sender().address(), deliverSm.destination().address(), deliverSm.message());
+              deliverSm.sender().address(),
+              deliverSm.destination().address(),
+              deliverSm.message(),
+              deliverSm.concatenatedRef(),
+              deliverSm.part(),
+              deliverSm.numberOfParts());
       future =
           parent
               .moHandler

@@ -20,4 +20,10 @@ package com.telenordigital.sms.smpp;
  * #L%
  */
 
-public record SmppSmsMo(String sender, String destination, String message) {}
+public record SmppSmsMo(
+    String sender,
+    String destination,
+    String message,
+    String longMessageId,
+    int part,
+    int numberOfParts) {}
