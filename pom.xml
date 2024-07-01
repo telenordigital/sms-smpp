@@ -51,7 +51,7 @@
     <netty.version>4.1.111.Final</netty.version>
     <slf4j.version>2.0.13</slf4j.version>
     <!-- test deps -->
-    <junit.version>5.10.2</junit.version>
+    <junit.version>5.10.3</junit.version>
     <ch-smpp.version>5.1.0-113</ch-smpp.version>
     <awaitility.version>4.2.1</awaitility.version>
     <logback.version>1.5.6</logback.version>
