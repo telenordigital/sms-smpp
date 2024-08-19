@@ -22,13 +22,12 @@ package com.telenordigital.sms.smpp.pdu;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import io.netty.buffer.ByteBufUtil;
 import java.nio.charset.StandardCharsets;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.ZoneId;
-
-import io.netty.buffer.ByteBufUtil;
 import org.junit.jupiter.api.Test;
 
 public class SubmitSmTest extends PduTest {
