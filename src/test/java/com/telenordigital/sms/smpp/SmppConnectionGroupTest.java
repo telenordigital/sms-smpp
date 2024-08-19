@@ -71,7 +71,7 @@ public class SmppConnectionGroupTest {
 
       final var response = group.submit(sms).get();
       assertThat(response.result()).isEqualTo(SmppResultCode.SUCCESS);
-      assertThat(response.reference()).containsExactly("");
+      assertThat(response.references()).containsExactly("");
 
       // one of the connection not active
       assertThat(group.isHealthy()).isFalse();
@@ -199,7 +199,7 @@ public class SmppConnectionGroupTest {
       mockSubmitSmResponse(0x14); // returns success the second time
       final var response = group.submit(sms).get();
       assertThat(response.result()).isEqualTo(SmppResultCode.SUCCESS);
-      assertThat(response.reference()).containsExactly("");
+      assertThat(response.references()).containsExactly("");
     }
   }
 

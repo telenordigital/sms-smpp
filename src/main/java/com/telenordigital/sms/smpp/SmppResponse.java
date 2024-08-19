@@ -24,14 +24,14 @@ import java.util.List;
 
 /**
  * @param result
- * @param reference
+ * @param references
  * @param message
  * @param details
  * @param destSubAddress The PLMN, aka the MCC and MNC concatenated
  */
 public record SmppResponse(
     SmppResultCode result,
-    List<String> reference,
+    List<String> references,
     String message,
     String details,
     String destSubAddress) {

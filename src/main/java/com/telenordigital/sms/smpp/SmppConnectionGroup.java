@@ -132,7 +132,8 @@ public class SmppConnectionGroup implements Closeable {
         optionalStatuses.stream()
             .filter(Optional::isPresent)
             .map(Optional::get)
-            .collect(Collectors.toCollection(LinkedHashSet::new));
+            .distinct()
+            .toList();
 
     final boolean success = statuses.stream().allMatch(Status::isSuccessful);
 
