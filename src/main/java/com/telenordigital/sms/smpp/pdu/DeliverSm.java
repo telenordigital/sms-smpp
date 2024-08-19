@@ -122,7 +122,7 @@ public record DeliverSm(
       if (identifier == 0x0) {
         // single byte identifier
         concatenatedRef = "%X".formatted(messageBytes[3]);
-      } else if (identifier == 0x04) {
+      } else if (identifier == 0x08) {
         // two byte identifier
         concatenatedRef = "%X%X".formatted(messageBytes[3], messageBytes[4]);
       } else {

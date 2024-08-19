@@ -22,6 +22,7 @@ package com.telenordigital.sms.smpp.pdu;
 
 import com.telenordigital.sms.smpp.charset.GsmCharset;
 import io.netty.buffer.ByteBuf;
+import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.time.Clock;
@@ -29,6 +30,11 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Random;
+import java.util.function.Supplier;
+import java.util.stream.IntStream;
 
 public record SubmitSm(
     int commandStatus,
@@ -38,8 +44,11 @@ public record SubmitSm(
     String validityPeriod,
     byte dataCoding,
     ByteArray encodedShortMessage,
-    int maxBytes)
+    int maxBytes,
+    boolean udhUsed)
     implements RequestPdu<SubmitSmResp> {
+
+  private static final Random random = new Random();
 
   private static final DateTimeFormatter validityFormatter =
       DateTimeFormatter.ofPattern("uuMMddHHmmssS00+").withZone(ZoneId.of("UTC"));
@@ -50,7 +59,8 @@ public record SubmitSm(
   }
 
   private static final byte serviceType = 0;
-  private static final byte esmClass = 0;
+  private static final byte standardEsmClass = 0;
+  private static final byte multipartUdhEsmClass = 0x40;
   private static final byte protocolId = 0;
   private static final byte priorityFlag = 0;
   private static final byte registeredDelivery =
@@ -59,24 +69,110 @@ public record SubmitSm(
   private static final byte smDefaultMessageId = 0;
   private static final byte scheduleDeliveryTime = 0;
 
-  public static SubmitSm create(
+  public static List<SubmitSm> create(
       final Clock clock,
       final String sender,
       final String msisdn,
       final String message,
-      final Duration validity) {
+      final Duration validity,
+      final boolean splitWithUdh) {
+    return create(
+        clock, sender, msisdn, message, validity, splitWithUdh, () -> (byte) random.nextInt(0xff));
+  }
+
+  static List<SubmitSm> create(
+      final Clock clock,
+      final String sender,
+      final String msisdn,
+      final String message,
+      final Duration validity,
+      final boolean splitWithUdh,
+      final Supplier<Byte> referenceGenerator) {
     final var charset = getCharset(message);
     final var canUseLatin1 = charset == StandardCharsets.ISO_8859_1;
     final var encodedShortMessage = message.getBytes(charset);
-    return new SubmitSm(
-        0,
-        Sequencer.next(),
-        getSender(sender),
-        getDestination(msisdn),
-        validityPeriod(clock, validity),
-        canUseLatin1 ? PduConstants.DATA_CODING_LATIN1 : PduConstants.DATA_CODING_UCS2,
-        new ByteArray(encodedShortMessage),
-        canUseLatin1 ? 160 : 140);
+    final var maxBytes = canUseLatin1 ? 160 : 140;
+    final int msgCount = 1 + (encodedShortMessage.length / maxBytes);
+    final Address senderAddress = getSender(sender);
+    final Address destination = getDestination(msisdn);
+    final String validityPeriod = validityPeriod(clock, validity);
+    final byte dataCoding =
+        canUseLatin1 ? PduConstants.DATA_CODING_LATIN1 : PduConstants.DATA_CODING_UCS2;
+    final ByteArray msgArray = new ByteArray(encodedShortMessage);
+
+    if (msgCount == 1 || !splitWithUdh) {
+      return List.of(
+          new SubmitSm(
+              0,
+              Sequencer.next(),
+              senderAddress,
+              destination,
+              validityPeriod,
+              dataCoding,
+              msgArray,
+              maxBytes,
+              false));
+    } else {
+      // Split message using UDH, the SMSC does not support the message_payload TLV
+      final byte reference = referenceGenerator.get();
+      final var messages = splitMessage(encodedShortMessage, maxBytes);
+
+      return messages.stream()
+          .map(
+              m ->
+                  new SubmitSm(
+                      0,
+                      Sequencer.next(),
+                      senderAddress,
+                      destination,
+                      validityPeriod,
+                      dataCoding,
+                      messageWithUdh(reference, messages.size(), m.index + 1, m.message),
+                      maxBytes,
+                      true))
+          .toList();
+    }
+  }
+
+  record MessagePart(int index, byte[] message) {}
+
+  static List<MessagePart> splitMessage(final byte[] encodedShortMessage, final int maxBytes) {
+    // UDH is 6 bytes, but for unknown reasons we need to leave one byte unused
+    final int maxBytesExcludingUdh = maxBytes - 7;
+    final int msgCount = 1 + (encodedShortMessage.length / maxBytesExcludingUdh);
+
+    return IntStream.range(0, msgCount)
+        .mapToObj(
+            i ->
+                new MessagePart(
+                    i,
+                    Arrays.copyOfRange(
+                        encodedShortMessage,
+                        i * maxBytesExcludingUdh,
+                        Math.min((i + 1) * maxBytesExcludingUdh, encodedShortMessage.length))))
+        .toList();
+  }
+
+  private static ByteArray messageWithUdh(
+      final byte reference, final int pduCount, final int partNumber, final byte[] messagePart) {
+    final ByteBuffer buf = ByteBuffer.allocate(6 + messagePart.length);
+    // Length of the UDH
+    buf.put((byte) 0x5);
+    // IEI, 0x0 indicates a single byte reference number
+    // Ideally we would use 0x8, indicating a two-byte reference number,
+    // but not all SMSCs support this.
+    buf.put((byte) 0x0);
+    // Length of the remaining fields
+    buf.put((byte) 0x3);
+    // Single byte reference number, must be equal for all parts
+    buf.put(reference);
+    // Number of parts
+    buf.put((byte) pduCount);
+    // This part's number in the sequence
+    buf.put((byte) partNumber);
+    // The actual message
+    buf.put(messagePart);
+    return new ByteArray(buf.array());
   }
 
   static String validityPeriod(final Clock clock, final Duration duration) {
@@ -124,7 +220,7 @@ public record SubmitSm(
     buf.writeByte(serviceType);
     sender.writeToBuffer(buf);
     destination.writeToBuffer(buf);
-    buf.writeByte(esmClass);
+    buf.writeByte(udhUsed ? multipartUdhEsmClass : standardEsmClass);
     buf.writeByte(protocolId);
     buf.writeByte(priorityFlag);
     buf.writeByte(scheduleDeliveryTime);
