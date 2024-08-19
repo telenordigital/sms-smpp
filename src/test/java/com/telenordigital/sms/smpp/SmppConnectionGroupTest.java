@@ -28,6 +28,7 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 
 import com.telenordigital.sms.smpp.config.SmppConnectionConfig;
+import com.telenordigital.sms.smpp.pdu.SubmitSmResp;
 import java.time.Clock;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -70,11 +71,45 @@ public class SmppConnectionGroupTest {
 
       final var response = group.submit(sms).get();
       assertThat(response.result()).isEqualTo(SmppResultCode.SUCCESS);
-      assertThat(response.reference()).isEqualTo("");
+      assertThat(response.references()).containsExactly("");
 
       // one of the connection not active
       assertThat(group.isHealthy()).isFalse();
     }
+  }
+
+  @Test
+  public void mergeStatus() {
+    final var allGood =
+        List.of(new SubmitSmResp(0, 10, "a", "123"), new SubmitSmResp(0, 11, "b", "123"));
+
+    assertThat(SmppConnectionGroup.mergeStatuses(allGood, "d1"))
+        .isEqualTo(
+            new SmppResponse(
+                SmppResultCode.SUCCESS, List.of("a", "b"), "ESME_ROK: null", null, "123"));
+
+    final var oneFailed =
+        List.of(new SubmitSmResp(0, 10, "a", "123"), new SubmitSmResp(0x45, 11, "b", "123"));
+
+    assertThat(SmppConnectionGroup.mergeStatuses(oneFailed, "d1"))
+        .isEqualTo(
+            new SmppResponse(
+                SmppResultCode.GENERAL_FAILURE,
+                List.of("a", "b"),
+                "ESME_ROK: null,ESME_RSUBMITFAIL: Generic failure",
+                "d1",
+                "123"));
+
+    final var failed =
+        List.of(new SubmitSmResp(0x45, 10, "a", null), new SubmitSmResp(0x45, 11, "b", null));
+    assertThat(SmppConnectionGroup.mergeStatuses(failed, "d1"))
+        .isEqualTo(
+            new SmppResponse(
+                SmppResultCode.GENERAL_FAILURE,
+                List.of("a", "b"),
+                "ESME_RSUBMITFAIL: Generic failure",
+                "d1",
+                null));
   }
 
   @SuppressWarnings("unchecked")
@@ -164,7 +199,7 @@ public class SmppConnectionGroupTest {
       mockSubmitSmResponse(0x14); // returns success the second time
       final var response = group.submit(sms).get();
       assertThat(response.result()).isEqualTo(SmppResultCode.SUCCESS);
-      assertThat(response.reference()).isEqualTo("");
+      assertThat(response.references()).containsExactly("");
     }
   }
 

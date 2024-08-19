@@ -20,6 +20,7 @@ package com.telenordigital.sms.smpp;
  * #L%
  */
 
+import com.telenordigital.sms.smpp.SmppMapping.Status;
 import com.telenordigital.sms.smpp.config.SmppConnectionConfig;
 import com.telenordigital.sms.smpp.pdu.SubmitSm;
 import com.telenordigital.sms.smpp.pdu.SubmitSmResp;
@@ -29,6 +30,7 @@ import java.time.Clock;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -97,24 +99,64 @@ public class SmppConnectionGroup implements Closeable {
   private CompletableFuture<SmppResponse> submitInternal(
       final SmppConnection conn, final SmppSmsMt sms) {
     final var details = info() + ". " + conn.info();
+    final List<SubmitSm> pduList =
+        SubmitSm.create(
+            clock,
+            sms.sender(),
+            sms.msisdn(),
+            sms.message(),
+            sms.validityPeriod(),
+            conn.config.splitWithUdh());
 
-    return conn.submit(
-            SubmitSm.create(clock, sms.sender(), sms.msisdn(), sms.message(), sms.validityPeriod()))
-        .thenApply(resp -> mapSubmitSmResp(resp, details))
+    final List<CompletableFuture<SubmitSmResp>> resps = pduList.stream().map(conn::submit).toList();
+
+    return CompletableFuture.allOf(resps.toArray(new CompletableFuture<?>[0]))
+        .thenApply(
+            v -> {
+              final var responses = resps.stream().map(CompletableFuture::join).toList();
+              return mergeStatuses(responses, details);
+            })
         .exceptionally(e -> SmppResponse.retriableError(e.getMessage(), details));
   }
 
-  private static SmppResponse mapSubmitSmResp(final SubmitSmResp resp, final String details) {
-    return SmppMapping.map(resp.commandStatus())
-        .map(
-            status ->
-                new SmppResponse(
-                    status.result(),
-                    resp.messageId(),
-                    status.name() + ": " + status.message(),
-                    status.isSuccessful() ? null : details,
-                    resp.destSubAddress()))
-        .orElse(SmppResponse.failure("Unknown command status", details));
+  static SmppResponse mergeStatuses(final List<SubmitSmResp> resps, final String details) {
+    final var optionalStatuses =
+        resps.stream().map(resp -> SmppMapping.map(resp.commandStatus())).toList();
+
+    if (optionalStatuses.stream().anyMatch(Optional::isEmpty)) {
+      return SmppResponse.failure("Unknown command status", details);
+    }
+
+    final var statuses =
+        optionalStatuses.stream()
+            .filter(Optional::isPresent)
+            .map(Optional::get)
+            .distinct()
+            .toList();
+
+    final boolean success = statuses.stream().allMatch(Status::isSuccessful);
+
+    final var result =
+        success
+            ? SmppResultCode.SUCCESS
+            : statuses.stream()
+                .filter(r -> !r.isSuccessful())
+                .map(Status::result)
+                .findFirst()
+                .orElse(null);
+
+    final String message =
+        statuses.stream().map(s -> s.name() + ": " + s.message()).collect(Collectors.joining(","));
+
+    final String destSubAddress =
+        resps.stream().findAny().map(SubmitSmResp::destSubAddress).orElse(null);
+
+    return new SmppResponse(
+        result,
+        resps.stream().map(SubmitSmResp::messageId).toList(),
+        message,
+        success ? null : details,
+        destSubAddress);
   }
 
   public String info() {
