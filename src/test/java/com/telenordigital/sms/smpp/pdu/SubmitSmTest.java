@@ -22,6 +22,7 @@ package com.telenordigital.sms.smpp.pdu;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import io.netty.buffer.ByteBufUtil;
 import java.nio.charset.StandardCharsets;
 import java.time.Clock;
 import java.time.Duration;
@@ -40,6 +41,18 @@ public class SubmitSmTest extends PduTest {
     final var msg = pdu.encodedShortMessage();
     final var hex = serialize(msg);
     assertThat(hex).doesNotStartWith("feff");
+  }
+
+  @Test
+  public void emoji() {
+    assertThat(SubmitSm.getCharset("only english")).isEqualTo(StandardCharsets.ISO_8859_1);
+    assertThat(SubmitSm.getCharset("scandinavian: æøå")).isEqualTo(StandardCharsets.ISO_8859_1);
+    assertThat(SubmitSm.getCharset("latin1, but not gsm: ó")).isEqualTo(StandardCharsets.UTF_16BE);
+
+    final var charset = SubmitSm.getCharset("Hey 😬");
+    assertThat(charset).isEqualTo(StandardCharsets.UTF_16BE);
+    final var encoded = "Hey 😬".getBytes(charset);
+    assertThat(ByteBufUtil.hexDump(encoded)).isEqualTo("0048006500790020d83dde2c");
   }
 
   @Test
