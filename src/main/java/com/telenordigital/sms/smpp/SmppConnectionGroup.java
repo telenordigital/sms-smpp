@@ -28,7 +28,6 @@ import java.io.Closeable;
 import java.lang.invoke.MethodHandles;
 import java.time.Clock;
 import java.util.Comparator;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
