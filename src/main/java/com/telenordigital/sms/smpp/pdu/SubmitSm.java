@@ -100,7 +100,7 @@ public record SubmitSm(
     return new Address(PduConstants.TON_INTERNATIONAL, PduConstants.NPI_E164, msisdn);
   }
 
-  private static Charset getCharset(final String message) {
+  static Charset getCharset(final String message) {
     // Some SMSCs will convert a Latin1 encoded message to GSM encoding, even if the
     // message is not representable using GSM. This results in any characters that
     // are in Latin1, but not in GSM, to be dropped from the message.
@@ -109,11 +109,6 @@ public record SubmitSm(
       return StandardCharsets.ISO_8859_1;
     }
 
-    for (int i = 0; i < message.length(); i++) {
-      if (Character.isHighSurrogate(message.charAt(i))) {
-        throw new IllegalArgumentException("Message contents is outside the BMP");
-      }
-    }
     return StandardCharsets.UTF_16BE;
   }
 
