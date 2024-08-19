@@ -20,6 +20,8 @@ package com.telenordigital.sms.smpp;
  * #L%
  */
 
+import java.util.List;
+
 /**
  * @param result
  * @param reference
@@ -29,13 +31,13 @@ package com.telenordigital.sms.smpp;
  */
 public record SmppResponse(
     SmppResultCode result,
-    String reference,
+    List<String> reference,
     String message,
     String details,
     String destSubAddress) {
 
   public static SmppResponse success(final String reference) {
-    return new SmppResponse(SmppResultCode.SUCCESS, reference, null, null, null);
+    return new SmppResponse(SmppResultCode.SUCCESS, List.of(reference), null, null, null);
   }
 
   public static SmppResponse retriableError(final String message, final String details) {

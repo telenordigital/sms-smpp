@@ -64,6 +64,7 @@ public class SmppConnectionTester {
             password,
             systemType,
             ssl,
+            false,
             null,
             null,
             null,

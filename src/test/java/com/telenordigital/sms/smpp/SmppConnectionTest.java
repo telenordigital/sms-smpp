@@ -91,6 +91,7 @@ public class SmppConnectionTest {
             "test",
             "",
             false,
+            false,
             null,
             null,
             null,
@@ -115,6 +116,7 @@ public class SmppConnectionTest {
             "test",
             "",
             true,
+            false,
             trustedCerts,
             null,
             null,
@@ -265,7 +267,7 @@ public class SmppConnectionTest {
               .mapToObj(
                   i -> {
                     final var submitSm =
-                        SubmitSm.create(Clock.systemUTC(), "A", "Z", "O" + i, null);
+                        SubmitSm.create(Clock.systemUTC(), "A", "Z", "O" + i, null, false).get(0);
                     // sync
                     assertThat(connection.submit(submitSm).join().commandStatus()).isEqualTo(0);
                     // async
@@ -314,7 +316,9 @@ public class SmppConnectionTest {
               .mapToObj(
                   i ->
                       connection
-                          .submit(SubmitSm.create(Clock.systemUTC(), "X", "Y", "Z" + i, null))
+                          .submit(
+                              SubmitSm.create(Clock.systemUTC(), "X", "Y", "Z" + i, null, false)
+                                  .get(0))
                           .thenApply(cs -> assertThat(cs.commandStatus()).isEqualTo(0)))
               .toArray(CompletableFuture[]::new);
       unbinder.unbind(connection);
@@ -348,7 +352,8 @@ public class SmppConnectionTest {
           .when(plainServer.getFirstSession().mock())
           .accept(any());
 
-      final var future = connection.submit(SubmitSm.create(Clock.systemUTC(), "X", "Y", "L", null));
+      final var future =
+          connection.submit(SubmitSm.create(Clock.systemUTC(), "X", "Y", "L", null, false).get(0));
       plainServer.disconnectAll();
       assertThatThrownBy(future::get)
           .hasMessage("com.telenordigital.sms.smpp.SmppException: Connection lost");
@@ -372,6 +377,7 @@ public class SmppConnectionTest {
             "test",
             "test",
             "",
+            false,
             false,
             null,
             null,
@@ -405,6 +411,7 @@ public class SmppConnectionTest {
             "test",
             "",
             false,
+            false,
             null,
             null,
             null,
@@ -421,10 +428,13 @@ public class SmppConnectionTest {
           .when(plainServer.getFirstSession().mock())
           .accept(any());
 
-      final var future = connection.submit(SubmitSm.create(Clock.systemUTC(), "1", "2", "3", null));
+      final var future =
+          connection.submit(SubmitSm.create(Clock.systemUTC(), "1", "2", "3", null, false).get(0));
       // simulate resubmission
       future.whenComplete(
-          (x, e) -> connection.submit(SubmitSm.create(Clock.systemUTC(), "4", "5", "6", null)));
+          (x, e) ->
+              connection.submit(
+                  SubmitSm.create(Clock.systemUTC(), "4", "5", "6", null, false).get(0)));
       assertThatThrownBy(future::get)
           .hasMessage("com.telenordigital.sms.smpp.SmppException: Connection lost");
 
@@ -467,7 +477,9 @@ public class SmppConnectionTest {
       final var sms =
           IntStream.range(0, 10)
               .mapToObj(
-                  i -> connection.submit(SubmitSm.create(Clock.systemUTC(), "A", "Z", "O", null)))
+                  i ->
+                      connection.submit(
+                          SubmitSm.create(Clock.systemUTC(), "A", "Z", "O", null, false).get(0)))
               .toArray(CompletableFuture[]::new);
 
       // calling unbind which will wait until it is down
@@ -555,6 +567,7 @@ public class SmppConnectionTest {
             "test",
             "",
             false,
+            false,
             null,
             null,
             null,
@@ -610,6 +623,7 @@ public class SmppConnectionTest {
             "test",
             "test",
             "",
+            false,
             false,
             null,
             null,
@@ -677,6 +691,7 @@ public class SmppConnectionTest {
             "test",
             "",
             false,
+            false,
             null,
             null,
             null,
@@ -726,6 +741,7 @@ public class SmppConnectionTest {
             "test",
             "don't accept me for the first time",
             "",
+            false,
             false,
             null,
             null,
