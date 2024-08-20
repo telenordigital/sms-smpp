@@ -131,7 +131,7 @@ class SmppConnection implements Closeable {
           .addListener(
               future -> {
                 if (!future.isSuccess()) {
-                  LOG.error("Error sending bind", future.cause());
+                  LOG.warn("Error sending bind", future.cause());
                   ctx.close();
                 }
               });
