@@ -31,11 +31,12 @@ import java.time.ZoneId;
 import org.junit.jupiter.api.Test;
 
 public class SubmitSmTest extends PduTest {
+
   @Test
   public void testBom() {
     final var pdus =
         SubmitSm.create(
-            Clock.systemUTC(), "40404", "44951361920", "седмичен абонамент", null, false);
+            Clock.systemUTC(), "40404", "44951361920", "седмичен абонамент", null, false, false);
     assertThat(pdus).hasSize(1);
     final var pdu = pdus.get(0);
     final var msg = pdu.encodedShortMessage();
@@ -66,7 +67,8 @@ public class SubmitSmTest extends PduTest {
             "part1" + "a".repeat(148) + "part2" + "b".repeat(10),
             null,
             true,
-            () -> (byte) 0x41);
+            () -> (byte) 0x41,
+            false);
     assertThat(pdus).hasSize(2);
     final var part1 = pdus.get(0);
     final var part2 = pdus.get(1);
@@ -114,7 +116,7 @@ public class SubmitSmTest extends PduTest {
   public void testSerialize() {
     Sequencer.sequence.set(20456);
     final var pdus =
-        SubmitSm.create(Clock.systemUTC(), "40404", "44951361920", "¡¤#!%&/:", null, true);
+        SubmitSm.create(Clock.systemUTC(), "40404", "44951361920", "¡¤#!%&/:", null, true, false);
     assertThat(pdus).hasSize(1);
     final var pdu = pdus.get(0);
 

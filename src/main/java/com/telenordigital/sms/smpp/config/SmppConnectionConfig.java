@@ -46,7 +46,8 @@ public record SmppConnectionConfig(
     byte[] trustedCerts,
     byte[] clientCert,
     byte[] clientKey,
-    int windowSize) {
+    int windowSize,
+    boolean correctSenderTon) {
 
   public SmppConnectionConfig(String host, int port, int reconnectTimeSeconds, int numberOfBinds) {
     this(
@@ -68,7 +69,8 @@ public record SmppConnectionConfig(
         null,
         null,
         null,
-        100);
+        100,
+        false);
   }
 
   public SmppConnectionConfig(String host, int port, int reconnectTimeSeconds) {

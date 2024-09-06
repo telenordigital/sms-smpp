@@ -31,6 +31,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 public class SmppConnectionTester {
+
   private static final CompletableFuture<SmppDeliveryReceipt> delivered = new CompletableFuture<>();
 
   public static CompletableFuture<Void> handleDelivery(final SmppDeliveryReceipt dr) {
@@ -68,7 +69,8 @@ public class SmppConnectionTester {
             null,
             null,
             null,
-            10);
+            10,
+            false);
 
     try (var group =
         new SmppConnectionGroup(

@@ -75,9 +75,17 @@ public record SubmitSm(
       final String msisdn,
       final String message,
       final Duration validity,
-      final boolean splitWithUdh) {
+      final boolean splitWithUdh,
+      final boolean correctSenderTon) {
     return create(
-        clock, sender, msisdn, message, validity, splitWithUdh, () -> (byte) random.nextInt(0xff));
+        clock,
+        sender,
+        msisdn,
+        message,
+        validity,
+        splitWithUdh,
+        () -> (byte) random.nextInt(0xff),
+        correctSenderTon);
   }
 
   static List<SubmitSm> create(
@@ -87,7 +95,8 @@ public record SubmitSm(
       final String message,
       final Duration validity,
       final boolean splitWithUdh,
-      final Supplier<Byte> referenceGenerator) {
+      final Supplier<Byte> referenceGenerator,
+      final boolean correctSenderTon) {
     final var charset = getCharset(message);
     final var canUseLatin1 = charset == StandardCharsets.ISO_8859_1;
     final var encodedShortMessage = message.getBytes(charset);

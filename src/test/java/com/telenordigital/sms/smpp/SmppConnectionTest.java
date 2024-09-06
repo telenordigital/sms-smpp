@@ -60,6 +60,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 
 @Timeout(15)
 public class SmppConnectionTest {
+
   @RegisterExtension public static SmppServerExtension plainServer = new SmppServerExtension(false);
   @RegisterExtension public static SmppServerExtension secureServer = new SmppServerExtension(true);
 
@@ -95,7 +96,8 @@ public class SmppConnectionTest {
             null,
             null,
             null,
-            100);
+            100,
+            false);
     final var trustedCerts =
         Objects.requireNonNull(getClass().getResourceAsStream("cloudhopper-cert.pem"))
             .readAllBytes();
@@ -120,7 +122,8 @@ public class SmppConnectionTest {
             trustedCerts,
             null,
             null,
-            100);
+            100,
+            false);
 
     receivedMo = new CompletableFuture<>();
     moHandler =
@@ -267,7 +270,8 @@ public class SmppConnectionTest {
               .mapToObj(
                   i -> {
                     final var submitSm =
-                        SubmitSm.create(Clock.systemUTC(), "A", "Z", "O" + i, null, false).get(0);
+                        SubmitSm.create(Clock.systemUTC(), "A", "Z", "O" + i, null, false, false)
+                            .get(0);
                     // sync
                     assertThat(connection.submit(submitSm).join().commandStatus()).isEqualTo(0);
                     // async
@@ -304,6 +308,7 @@ public class SmppConnectionTest {
   }
 
   interface Unbinder {
+
     void unbind(SmppConnection connection) throws Exception;
   }
 
@@ -317,7 +322,8 @@ public class SmppConnectionTest {
                   i ->
                       connection
                           .submit(
-                              SubmitSm.create(Clock.systemUTC(), "X", "Y", "Z" + i, null, false)
+                              SubmitSm.create(
+                                      Clock.systemUTC(), "X", "Y", "Z" + i, null, false, false)
                                   .get(0))
                           .thenApply(cs -> assertThat(cs.commandStatus()).isEqualTo(0)))
               .toArray(CompletableFuture[]::new);
@@ -353,7 +359,8 @@ public class SmppConnectionTest {
           .accept(any());
 
       final var future =
-          connection.submit(SubmitSm.create(Clock.systemUTC(), "X", "Y", "L", null, false).get(0));
+          connection.submit(
+              SubmitSm.create(Clock.systemUTC(), "X", "Y", "L", null, false, false).get(0));
       plainServer.disconnectAll();
       assertThatThrownBy(future::get)
           .hasMessage("com.telenordigital.sms.smpp.SmppException: Connection lost");
@@ -382,7 +389,8 @@ public class SmppConnectionTest {
             null,
             null,
             null,
-            100);
+            100,
+            false);
     try (var connection = new SmppConnection(idleConfig, moHandler, drHandler)) {
       waitUntilActive(connection, 4);
 
@@ -415,7 +423,8 @@ public class SmppConnectionTest {
             null,
             null,
             null,
-            100);
+            100,
+            false);
     try (var connection = new SmppConnection(idleConfig, moHandler, drHandler)) {
       waitUntilActive(connection, 4);
 
@@ -429,12 +438,13 @@ public class SmppConnectionTest {
           .accept(any());
 
       final var future =
-          connection.submit(SubmitSm.create(Clock.systemUTC(), "1", "2", "3", null, false).get(0));
+          connection.submit(
+              SubmitSm.create(Clock.systemUTC(), "1", "2", "3", null, false, false).get(0));
       // simulate resubmission
       future.whenComplete(
           (x, e) ->
               connection.submit(
-                  SubmitSm.create(Clock.systemUTC(), "4", "5", "6", null, false).get(0)));
+                  SubmitSm.create(Clock.systemUTC(), "4", "5", "6", null, false, false).get(0)));
       assertThatThrownBy(future::get)
           .hasMessage("com.telenordigital.sms.smpp.SmppException: Connection lost");
 
@@ -479,7 +489,8 @@ public class SmppConnectionTest {
               .mapToObj(
                   i ->
                       connection.submit(
-                          SubmitSm.create(Clock.systemUTC(), "A", "Z", "O", null, false).get(0)))
+                          SubmitSm.create(Clock.systemUTC(), "A", "Z", "O", null, false, false)
+                              .get(0)))
               .toArray(CompletableFuture[]::new);
 
       // calling unbind which will wait until it is down
@@ -571,7 +582,8 @@ public class SmppConnectionTest {
             null,
             null,
             null,
-            2);
+            2,
+            false);
     try (var connection = new SmppConnection(smallWindow, moHandler, drHandler)) {
       waitUntilActive(connection, 4);
 
@@ -628,7 +640,8 @@ public class SmppConnectionTest {
             null,
             null,
             null,
-            100);
+            100,
+            false);
     try (var connection = new SmppConnection(lowTimeout, moHandler, drHandler)) {
       waitUntilActive(connection, 4);
 
@@ -695,7 +708,8 @@ public class SmppConnectionTest {
             null,
             null,
             null,
-            100);
+            100,
+            false);
 
     try (var connection =
         new SmppConnection(
@@ -746,7 +760,8 @@ public class SmppConnectionTest {
             null,
             null,
             null,
-            100);
+            100,
+            false);
 
     try (var connection = new SmppConnection(badPasswordConfig, moHandler, drHandler)) {
       waitUntilActive(connection, 4);
