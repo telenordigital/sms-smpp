@@ -31,11 +31,12 @@ import java.time.ZoneId;
 import org.junit.jupiter.api.Test;
 
 public class SubmitSmTest extends PduTest {
+
   @Test
   public void testBom() {
     final var pdus =
         SubmitSm.create(
-            Clock.systemUTC(), "40404", "44951361920", "седмичен абонамент", null, false);
+            Clock.systemUTC(), "40404", "44951361920", "седмичен абонамент", null, false, false);
     assertThat(pdus).hasSize(1);
     final var pdu = pdus.get(0);
     final var msg = pdu.encodedShortMessage();
@@ -66,7 +67,8 @@ public class SubmitSmTest extends PduTest {
             "part1" + "a".repeat(148) + "part2" + "b".repeat(10),
             null,
             true,
-            () -> (byte) 0x41);
+            () -> (byte) 0x41,
+            false);
     assertThat(pdus).hasSize(2);
     final var part1 = pdus.get(0);
     final var part2 = pdus.get(1);
@@ -114,7 +116,7 @@ public class SubmitSmTest extends PduTest {
   public void testSerialize() {
     Sequencer.sequence.set(20456);
     final var pdus =
-        SubmitSm.create(Clock.systemUTC(), "40404", "44951361920", "¡¤#!%&/:", null, true);
+        SubmitSm.create(Clock.systemUTC(), "40404", "44951361920", "¡¤#!%&/:", null, true, false);
     assertThat(pdus).hasSize(1);
     final var pdu = pdus.get(0);
 
@@ -133,5 +135,33 @@ public class SubmitSmTest extends PduTest {
     assertThat(SubmitSm.validityPeriod(clock, Duration.ofMinutes(30)))
         .isEqualTo("210422142340000+")
         .hasSize(16);
+  }
+
+  @Test
+  public void testNetworkSpecificTon() {
+    Sequencer.sequence.set(20456);
+    final var pdus =
+        SubmitSm.create(Clock.systemUTC(), "40404", "44951361920", "¡¤#!%&/:", null, true, true);
+    assertThat(pdus).hasSize(1);
+    final var pdu = pdus.get(0);
+
+    final var hex = serialize(pdu);
+
+    assertThat(hex)
+        .isEqualTo(
+            "000000040000000000004fe8000300343034303400010134343935313336313932300000000000000100030008a1a4232125262f3a");
+  }
+
+  @Test
+  void getSender() {
+    final var sender0 = SubmitSm.getSender("47999990901", false);
+    assertThat(sender0.ton()).isEqualTo(PduConstants.TON_INTERNATIONAL);
+    assertThat(sender0.npi()).isEqualTo(PduConstants.NPI_E164);
+    assertThat(SubmitSm.getSender("47999990901", true).ton())
+        .isEqualTo(PduConstants.TON_INTERNATIONAL);
+    assertThat(SubmitSm.getSender("300000", false).ton()).isEqualTo(PduConstants.TON_INTERNATIONAL);
+    final var sender = SubmitSm.getSender("300000", true);
+    assertThat(sender.ton()).isEqualTo(PduConstants.TON_NETWORK_SPECIFIC);
+    assertThat(sender.npi()).isEqualTo(PduConstants.NPI_UNKNOWN);
   }
 }

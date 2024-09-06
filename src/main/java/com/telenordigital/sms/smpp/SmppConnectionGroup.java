@@ -106,7 +106,8 @@ public class SmppConnectionGroup implements Closeable {
             sms.msisdn(),
             sms.message(),
             sms.validityPeriod(),
-            conn.config.splitWithUdh());
+            conn.config.splitWithUdh(),
+            conn.config.useNetworkSpecificTonForShortCode());
 
     final List<CompletableFuture<SubmitSmResp>> resps = pduList.stream().map(conn::submit).toList();
 
