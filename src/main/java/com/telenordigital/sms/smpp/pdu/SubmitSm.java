@@ -203,8 +203,8 @@ public record SubmitSm(
 
     return new Address(
         senderTon,
-        useNetworkSpecificTonForShortCode
-            ? PduConstants.TON_NETWORK_SPECIFIC
+        senderTon == PduConstants.TON_NETWORK_SPECIFIC
+            ? PduConstants.NPI_UNKNOWN
             : PduConstants.NPI_E164,
         sender);
   }

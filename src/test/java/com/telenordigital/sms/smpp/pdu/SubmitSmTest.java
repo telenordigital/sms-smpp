@@ -138,7 +138,7 @@ public class SubmitSmTest extends PduTest {
   }
 
   @Test
-  public void testTon() {
+  public void testNetworkSpecificTon() {
     Sequencer.sequence.set(20456);
     final var pdus =
         SubmitSm.create(Clock.systemUTC(), "40404", "44951361920", "¡¤#!%&/:", null, true, true);
@@ -149,18 +149,19 @@ public class SubmitSmTest extends PduTest {
 
     assertThat(hex)
         .isEqualTo(
-            "000000040000000000004fe8000303343034303400010134343935313336313932"
-                + "300000000000000100030008a1a4232125262f3a");
+            "000000040000000000004fe8000300343034303400010134343935313336313932300000000000000100030008a1a4232125262f3a");
   }
 
   @Test
   void getSender() {
-    assertThat(SubmitSm.getSender("47999990901", false).ton())
-        .isEqualTo(PduConstants.TON_INTERNATIONAL);
+    final var sender0 = SubmitSm.getSender("47999990901", false);
+    assertThat(sender0.ton()).isEqualTo(PduConstants.TON_INTERNATIONAL);
+    assertThat(sender0.npi()).isEqualTo(PduConstants.NPI_E164);
     assertThat(SubmitSm.getSender("47999990901", true).ton())
         .isEqualTo(PduConstants.TON_INTERNATIONAL);
     assertThat(SubmitSm.getSender("300000", false).ton()).isEqualTo(PduConstants.TON_INTERNATIONAL);
-    assertThat(SubmitSm.getSender("300000", true).ton())
-        .isEqualTo(PduConstants.TON_NETWORK_SPECIFIC);
+    final var sender = SubmitSm.getSender("300000", true);
+    assertThat(sender.ton()).isEqualTo(PduConstants.TON_NETWORK_SPECIFIC);
+    assertThat(sender.npi()).isEqualTo(PduConstants.NPI_UNKNOWN);
   }
 }
