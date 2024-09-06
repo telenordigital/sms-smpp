@@ -76,7 +76,7 @@ public record SubmitSm(
       final String message,
       final Duration validity,
       final boolean splitWithUdh,
-      final boolean correctSenderTon) {
+      final boolean useNetworkSpecificTonForShortCode) {
     return create(
         clock,
         sender,
@@ -85,7 +85,7 @@ public record SubmitSm(
         validity,
         splitWithUdh,
         () -> (byte) random.nextInt(0xff),
-        correctSenderTon);
+        useNetworkSpecificTonForShortCode);
   }
 
   static List<SubmitSm> create(
@@ -96,13 +96,13 @@ public record SubmitSm(
       final Duration validity,
       final boolean splitWithUdh,
       final Supplier<Byte> referenceGenerator,
-      final boolean correctSenderTon) {
+      final boolean useNetworkSpecificTonForShortCode) {
     final var charset = getCharset(message);
     final var canUseLatin1 = charset == StandardCharsets.ISO_8859_1;
     final var encodedShortMessage = message.getBytes(charset);
     final var maxBytes = canUseLatin1 ? 160 : 140;
     final int msgCount = 1 + (encodedShortMessage.length / maxBytes);
-    final Address senderAddress = getSender(sender);
+    final Address senderAddress = getSender(sender, useNetworkSpecificTonForShortCode);
     final Address destination = getDestination(msisdn);
     final String validityPeriod = validityPeriod(clock, validity);
     final byte dataCoding =
@@ -192,13 +192,21 @@ public record SubmitSm(
     return validityFormatter.format(expiration);
   }
 
-  private static Address getSender(final String sender) {
+  static Address getSender(final String sender, boolean useNetworkSpecificTonForShortCode) {
     final byte senderTon =
         sender.matches(".*[a-zA-Z].*")
             ? PduConstants.TON_ALPHANUMERIC
-            : PduConstants.TON_INTERNATIONAL;
+            // Short Code (3 digits to 8 digits in length)
+            : useNetworkSpecificTonForShortCode && sender.matches("\\d{3,8}")
+                ? PduConstants.TON_NETWORK_SPECIFIC
+                : PduConstants.TON_INTERNATIONAL;
 
-    return new Address(senderTon, PduConstants.NPI_E164, sender);
+    return new Address(
+        senderTon,
+        useNetworkSpecificTonForShortCode
+            ? PduConstants.TON_NETWORK_SPECIFIC
+            : PduConstants.NPI_E164,
+        sender);
   }
 
   private static Address getDestination(final String msisdn) {

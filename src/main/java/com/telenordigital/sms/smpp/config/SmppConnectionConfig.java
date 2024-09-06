@@ -47,7 +47,7 @@ public record SmppConnectionConfig(
     byte[] clientCert,
     byte[] clientKey,
     int windowSize,
-    boolean correctSenderTon) {
+    boolean useNetworkSpecificTonForShortCode) {
 
   public SmppConnectionConfig(String host, int port, int reconnectTimeSeconds, int numberOfBinds) {
     this(

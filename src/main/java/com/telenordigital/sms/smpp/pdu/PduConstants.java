@@ -21,6 +21,7 @@ package com.telenordigital.sms.smpp.pdu;
  */
 
 final class PduConstants {
+
   static final byte VERSION_3_4 = 0x34;
 
   static final byte REGISTERED_DELIVERY_SMSC_RECEIPT_REQUESTED = 1;
@@ -34,7 +35,9 @@ final class PduConstants {
   static final byte TON_NATIONAL = 0x02;
   static final byte TON_SUBSCRIBER = 0x04;
   static final byte TON_ALPHANUMERIC = 0x05;
+  static final byte TON_NETWORK_SPECIFIC = 0x03; // TON
 
+  static final byte NPI_UNKNOWN = 0x00;
   static final byte NPI_E164 = 0x01;
   static final byte NPI_PRIVATE = 0x09;
 

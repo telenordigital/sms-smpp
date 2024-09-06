@@ -136,4 +136,31 @@ public class SubmitSmTest extends PduTest {
         .isEqualTo("210422142340000+")
         .hasSize(16);
   }
+
+  @Test
+  public void testTon() {
+    Sequencer.sequence.set(20456);
+    final var pdus =
+        SubmitSm.create(Clock.systemUTC(), "40404", "44951361920", "¡¤#!%&/:", null, true, true);
+    assertThat(pdus).hasSize(1);
+    final var pdu = pdus.get(0);
+
+    final var hex = serialize(pdu);
+
+    assertThat(hex)
+        .isEqualTo(
+            "000000040000000000004fe8000303343034303400010134343935313336313932"
+                + "300000000000000100030008a1a4232125262f3a");
+  }
+
+  @Test
+  void getSender() {
+    assertThat(SubmitSm.getSender("47999990901", false).ton())
+        .isEqualTo(PduConstants.TON_INTERNATIONAL);
+    assertThat(SubmitSm.getSender("47999990901", true).ton())
+        .isEqualTo(PduConstants.TON_INTERNATIONAL);
+    assertThat(SubmitSm.getSender("300000", false).ton()).isEqualTo(PduConstants.TON_INTERNATIONAL);
+    assertThat(SubmitSm.getSender("300000", true).ton())
+        .isEqualTo(PduConstants.TON_NETWORK_SPECIFIC);
+  }
 }
