@@ -65,6 +65,7 @@ public class SmppConnectionTester {
             password,
             systemType,
             ssl,
+            SmppConnectionConfig.SslProvider.OPENSSL,
             false,
             null,
             null,
