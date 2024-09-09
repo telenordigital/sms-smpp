@@ -42,6 +42,7 @@ public record SmppConnectionConfig(
     String password,
     String systemType,
     boolean useTls,
+    SslProvider sslProvider,
     boolean splitWithUdh,
     byte[] trustedCerts,
     byte[] clientCert,
@@ -65,12 +66,18 @@ public record SmppConnectionConfig(
         null,
         null,
         false,
+        SslProvider.JDK,
         false,
         null,
         null,
         null,
         100,
         false);
+  }
+
+  public enum SslProvider {
+    JDK,
+    OPENSSL
   }
 
   public SmppConnectionConfig(String host, int port, int reconnectTimeSeconds) {

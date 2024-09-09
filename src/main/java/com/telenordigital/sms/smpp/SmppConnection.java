@@ -47,6 +47,7 @@ import io.netty.handler.codec.LengthFieldPrepender;
 import io.netty.handler.logging.LoggingHandler;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.SslHandler;
+import io.netty.handler.ssl.SslProvider;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
 import io.netty.handler.timeout.IdleStateHandler;
@@ -59,6 +60,7 @@ import java.nio.charset.Charset;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
+import javax.net.ssl.SSLEngine;
 import javax.net.ssl.SSLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -185,7 +187,12 @@ class SmppConnection implements Closeable {
       final byte[] clientCert,
       final byte[] clientKey) {
     try {
-      final var sslContext = SslContextBuilder.forClient();
+      final var sslContext =
+          SslContextBuilder.forClient()
+              .sslProvider(
+                  config.sslProvider() == SmppConnectionConfig.SslProvider.OPENSSL
+                      ? SslProvider.OPENSSL
+                      : SslProvider.JDK);
 
       if (trustedCerts != null) {
         sslContext.trustManager(new ByteArrayInputStream(trustedCerts));
@@ -194,7 +201,7 @@ class SmppConnection implements Closeable {
         sslContext.keyManager(
             new ByteArrayInputStream(clientCert), new ByteArrayInputStream(clientKey));
       }
-      final var engine = sslContext.build().newEngine(channel.alloc());
+      final SSLEngine engine = sslContext.build().newEngine(channel.alloc());
 
       channel.pipeline().addFirst("ssl", new SslHandler(engine));
     } catch (final SSLException e) {
