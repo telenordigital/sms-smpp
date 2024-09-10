@@ -49,6 +49,7 @@ public class SubmitSmTest extends PduTest {
     assertThat(SubmitSm.getCharset("only english")).isEqualTo(StandardCharsets.ISO_8859_1);
     assertThat(SubmitSm.getCharset("scandinavian: æøå")).isEqualTo(StandardCharsets.ISO_8859_1);
     assertThat(SubmitSm.getCharset("latin1, but not gsm: ó")).isEqualTo(StandardCharsets.UTF_16BE);
+    assertThat(SubmitSm.getCharset("With quote \"STOP\"")).isEqualTo(StandardCharsets.ISO_8859_1);
 
     final var charset = SubmitSm.getCharset("Hey 😬");
     assertThat(charset).isEqualTo(StandardCharsets.UTF_16BE);

@@ -91,7 +91,7 @@ public class GsmCharset extends Charset {
     {'É', (byte) 0x1f},
     {'\u0020', (byte) 0x20},
     {'!', (byte) 0x21},
-    {'\'', (byte) 0x22},
+    {'"', (byte) 0x22},
     {'#', (byte) 0x23},
     {'¤', (byte) 0x24},
     {'%', (byte) 0x25},
