@@ -146,8 +146,7 @@ public record SubmitSm(
   record MessagePart(int index, byte[] message) {}
 
   static List<MessagePart> splitMessage(final byte[] encodedShortMessage, final int maxBytes) {
-    // UDH is 6 bytes, but for unknown reasons we need to leave one byte unused
-    final int maxBytesExcludingUdh = maxBytes - 7;
+    final int maxBytesExcludingUdh = maxBytes - 6;
     final int msgCount = 1 + (encodedShortMessage.length / maxBytesExcludingUdh);
 
     return IntStream.range(0, msgCount)
