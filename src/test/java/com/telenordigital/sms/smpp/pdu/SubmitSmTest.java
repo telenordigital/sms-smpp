@@ -58,6 +58,44 @@ public class SubmitSmTest extends PduTest {
   }
 
   @Test
+  public void testSplitUnicode() {
+    Sequencer.sequence.set(20456);
+    final var pdus =
+        SubmitSm.create(
+            Clock.systemUTC(),
+            "40404",
+            "44951361920",
+            "For thousands of years, mathematicians have attempted to extend their understanding of π, sometimes by computing its value to a high degree oπ accuracy. Ancient civilizations, including the Egyptians and Babylonians, required fairly accurate approximations of π for practical computations.",
+            null,
+            true,
+            () -> (byte) 0x41,
+            false);
+    assertThat(pdus).hasSize(5);
+    final var part1 = pdus.get(0);
+    final var part2 = pdus.get(1);
+
+    final var hex1 = serialize(part1);
+    final var hex2 = serialize(part2);
+
+    final var udh1 = hex1.substring(90, 102);
+    final var udh2 = hex2.substring(90, 102);
+
+    final var message1 = hex1.substring(102);
+    final var message2 = hex2.substring(102);
+
+    assertThat(part1.encodedShortMessage().length()).isEqualTo(140);
+    assertThat(part2.encodedShortMessage().length()).isEqualTo(140);
+
+    assertThat(udh1).isEqualTo("050003410501");
+    assertThat(udh2).isEqualTo("050003410502");
+
+    assertThat(message1).startsWith("00");
+    assertThat(message1).doesNotEndWith("00");
+    assertThat(message2).startsWith("00");
+    assertThat(message2).doesNotEndWith("00");
+  }
+
+  @Test
   public void testSerializeLongUdh() {
     Sequencer.sequence.set(20456);
     final var pdus =
@@ -65,7 +103,7 @@ public class SubmitSmTest extends PduTest {
             Clock.systemUTC(),
             "40404",
             "44951361920",
-            "part1" + "a".repeat(148) + "part2" + "b".repeat(10),
+            "part1" + "a".repeat(149) + "part2" + "b".repeat(10),
             null,
             true,
             () -> (byte) 0x41,
@@ -80,7 +118,7 @@ public class SubmitSmTest extends PduTest {
     final var udh1 = hex1.substring(90, 102);
     final var udh2 = hex2.substring(90, 102);
 
-    assertThat(part1.encodedShortMessage().length()).isEqualTo(159);
+    assertThat(part1.encodedShortMessage().length()).isEqualTo(160);
     assertThat(part2.encodedShortMessage().length()).isEqualTo(21);
 
     assertThat(udh1).isEqualTo("050003410201");
@@ -88,7 +126,7 @@ public class SubmitSmTest extends PduTest {
 
     assertThat(hex1)
         .isEqualTo(
-            "000000040000000000004fe800010134303430340001013434393531333631393230004000000000010003009f050003410201706172743161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161");
+            "000000040000000000004fe80001013430343034000101343439353133363139323000400000000001000300a005000341020170617274316161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161");
 
     assertThat(hex2)
         .isEqualTo(
@@ -105,7 +143,7 @@ public class SubmitSmTest extends PduTest {
     assertThat(split1.get(0).message()).isEqualTo(new byte[] {0x61, 0x61});
 
     final var msg2 = "123456789 123456789";
-    final var split2 = SubmitSm.splitMessage(msg2.getBytes(latin1), 10);
+    final var split2 = SubmitSm.splitMessage(msg2.getBytes(latin1), 9);
     assertThat(split2).hasSize(7);
     assertThat(split2.get(0).message()).isEqualTo(new byte[] {0x31, 0x32, 0x33});
     assertThat(split2.get(1).message()).isEqualTo(new byte[] {0x34, 0x35, 0x36});
