@@ -100,7 +100,7 @@ public record SubmitSm(
     final var charset = getCharset(message);
     final var canUseLatin1 = charset == StandardCharsets.ISO_8859_1;
     final var encodedShortMessage = message.getBytes(charset);
-    final var maxBytes = canUseLatin1 ? 160 : 140;
+    final var maxBytes = canUseLatin1 ? 159 : 140;
     final int msgCount = 1 + (encodedShortMessage.length / maxBytes);
     final Address senderAddress = getSender(sender, useNetworkSpecificTonForShortCode);
     final Address destination = getDestination(msisdn);
