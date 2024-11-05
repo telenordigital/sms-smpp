@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>sms-smpp</artifactId>
-  <version>1.17-SNAPSHOT</version>
+  <version>1.18-SNAPSHOT</version>
   <groupId>com.telenordigital.sms</groupId>
 
   <name>SMPP client library</name>
