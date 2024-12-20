@@ -7,6 +7,8 @@ updates:
     reviewers:
       - "agavrilov76"
       - "madsholden"
+    ignore:
+      - depencency-name: "org.restcomm.smpp:ch-smpp"
     groups:
       patches:
         update-types:
