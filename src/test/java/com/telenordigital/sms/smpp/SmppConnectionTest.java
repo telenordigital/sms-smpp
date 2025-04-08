@@ -91,12 +91,8 @@ public class SmppConnectionTest {
             "test",
             "test",
             "",
-            false,
             null,
             false,
-            null,
-            null,
-            null,
             100,
             false);
     final var trustedCerts =
@@ -118,12 +114,8 @@ public class SmppConnectionTest {
             "test",
             "test",
             "",
-            true,
             null,
             false,
-            trustedCerts,
-            null,
-            null,
             100,
             false);
 
@@ -386,12 +378,8 @@ public class SmppConnectionTest {
             "test",
             "test",
             "",
-            false,
             null,
             false,
-            null,
-            null,
-            null,
             100,
             false);
     try (var connection = new SmppConnection(idleConfig, moHandler, drHandler)) {
@@ -421,12 +409,8 @@ public class SmppConnectionTest {
             "test",
             "test",
             "",
-            false,
             null,
             false,
-            null,
-            null,
-            null,
             100,
             false);
     try (var connection = new SmppConnection(idleConfig, moHandler, drHandler)) {
@@ -581,12 +565,8 @@ public class SmppConnectionTest {
             "test",
             "test",
             "",
-            false,
             null,
             false,
-            null,
-            null,
-            null,
             2,
             false);
     try (var connection = new SmppConnection(smallWindow, moHandler, drHandler)) {
@@ -640,12 +620,8 @@ public class SmppConnectionTest {
             "test",
             "test",
             "",
-            false,
             null,
             false,
-            null,
-            null,
-            null,
             100,
             false);
     try (var connection = new SmppConnection(lowTimeout, moHandler, drHandler)) {
@@ -709,12 +685,8 @@ public class SmppConnectionTest {
             "test",
             "test",
             "",
-            false,
             null,
             false,
-            null,
-            null,
-            null,
             100,
             false);
 
@@ -762,12 +734,8 @@ public class SmppConnectionTest {
             "test",
             "don't accept me for the first time",
             "",
-            false,
             null,
             false,
-            null,
-            null,
-            null,
             100,
             false);
 

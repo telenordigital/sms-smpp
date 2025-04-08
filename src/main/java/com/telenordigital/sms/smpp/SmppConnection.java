@@ -21,6 +21,7 @@ package com.telenordigital.sms.smpp;
  */
 
 import com.telenordigital.sms.smpp.config.SmppConnectionConfig;
+import com.telenordigital.sms.smpp.config.TlsConfig;
 import com.telenordigital.sms.smpp.pdu.Bind;
 import com.telenordigital.sms.smpp.pdu.BindResp;
 import com.telenordigital.sms.smpp.pdu.Command;
@@ -60,6 +61,7 @@ import java.nio.charset.Charset;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
+import javax.net.ssl.SNIHostName;
 import javax.net.ssl.SSLEngine;
 import javax.net.ssl.SSLException;
 import org.slf4j.Logger;
@@ -98,13 +100,7 @@ class SmppConnection implements Closeable {
                 new ChannelInitializer<SocketChannel>() {
                   @Override
                   protected void initChannel(final SocketChannel channel) {
-                    setupPipeline(
-                        channel,
-                        config.useTls(),
-                        config.trustedCerts(),
-                        config.clientCert(),
-                        config.clientKey(),
-                        config.defaultEncoding().charset);
+                    setupPipeline(channel, config.tls(), config.defaultEncoding().charset);
                   }
                 });
 
@@ -181,25 +177,27 @@ class SmppConnection implements Closeable {
     }
   }
 
-  private void addSslHandler(
-      final SocketChannel channel,
-      final byte[] trustedCerts,
-      final byte[] clientCert,
-      final byte[] clientKey) {
+  private void addSslHandler(final SocketChannel channel, final TlsConfig tls) {
     try {
       final var sslContext =
           SslContextBuilder.forClient()
               .sslProvider(
-                  config.sslProvider() == SmppConnectionConfig.SslProvider.OPENSSL
+                  tls.sslProvider() == SmppConnectionConfig.SslProvider.OPENSSL
                       ? SslProvider.OPENSSL
                       : SslProvider.JDK);
 
-      if (trustedCerts != null) {
-        sslContext.trustManager(new ByteArrayInputStream(trustedCerts));
+      if (tls.verifyHostname()) {
+        sslContext
+            .endpointIdentificationAlgorithm("HTTPS")
+            .serverName(new SNIHostName(tls.expectedServerHostname()));
       }
-      if (clientCert != null) {
+
+      if (tls.trustedCerts() != null) {
+        sslContext.trustManager(new ByteArrayInputStream(tls.trustedCerts()));
+      }
+      if (tls.clientCert() != null) {
         sslContext.keyManager(
-            new ByteArrayInputStream(clientCert), new ByteArrayInputStream(clientKey));
+            new ByteArrayInputStream(tls.clientCert()), new ByteArrayInputStream(tls.clientKey()));
       }
       final SSLEngine engine = sslContext.build().newEngine(channel.alloc());
 
@@ -210,14 +208,9 @@ class SmppConnection implements Closeable {
   }
 
   private void setupPipeline(
-      final SocketChannel channel,
-      final boolean useSsl,
-      final byte[] trustedCerts,
-      final byte[] clientCert,
-      final byte[] clientKey,
-      final Charset defaultCharset) {
-    if (useSsl) {
-      addSslHandler(channel, trustedCerts, clientCert, clientKey);
+      final SocketChannel channel, final TlsConfig tls, final Charset defaultCharset) {
+    if (tls != null && tls.enabled()) {
+      addSslHandler(channel, tls);
     }
 
     outboundPduHandler =

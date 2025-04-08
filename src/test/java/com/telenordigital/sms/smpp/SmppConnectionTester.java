@@ -25,6 +25,7 @@ import static org.awaitility.Awaitility.await;
 import com.telenordigital.sms.smpp.config.BindType;
 import com.telenordigital.sms.smpp.config.DefaultEncoding;
 import com.telenordigital.sms.smpp.config.SmppConnectionConfig;
+import com.telenordigital.sms.smpp.config.TlsConfig;
 import java.time.Clock;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -64,12 +65,9 @@ public class SmppConnectionTester {
             systemId,
             password,
             systemType,
-            ssl,
-            SmppConnectionConfig.SslProvider.OPENSSL,
+            new TlsConfig(
+                ssl, SmppConnectionConfig.SslProvider.OPENSSL, null, null, null, host, true),
             false,
-            null,
-            null,
-            null,
             10,
             false);
 
