@@ -40,7 +40,8 @@ import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.ChannelInitializer;
-import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.MultiThreadIoEventLoopGroup;
+import io.netty.channel.nio.NioIoHandler;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
@@ -73,7 +74,7 @@ class SmppConnection implements Closeable {
 
   private OutboundPduHandler outboundPduHandler;
   final SmppConnectionConfig config;
-  private final NioEventLoopGroup group;
+  private final MultiThreadIoEventLoopGroup group;
   private final Bootstrap bootstrap;
   final Function<SmppSmsMo, CompletableFuture<Void>> moHandler;
   final Function<SmppDeliveryReceipt, CompletableFuture<Void>> drHandler;
@@ -87,7 +88,9 @@ class SmppConnection implements Closeable {
       final Function<SmppSmsMo, CompletableFuture<Void>> moHandler,
       final Function<SmppDeliveryReceipt, CompletableFuture<Void>> drHandler) {
     this.config = config;
-    group = new NioEventLoopGroup(new DefaultThreadFactory(config.connectionUrl().toString()));
+    group =
+        new MultiThreadIoEventLoopGroup(
+            new DefaultThreadFactory(config.connectionUrl().toString()), NioIoHandler.newFactory());
     this.moHandler = moHandler;
     this.drHandler = drHandler;
 
