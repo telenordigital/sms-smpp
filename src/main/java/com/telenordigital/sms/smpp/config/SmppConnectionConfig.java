@@ -77,8 +77,7 @@ public record SmppConnectionConfig(
   }
 
   public URI connectionUrl() {
-    final var useTls = tls != null && tls.enabled();
     return URI.create(
-        String.format("%s://%s@%s:%d", useTls ? "smpps" : "smpp", systemId, host, port));
+        String.format("%s://%s@%s:%d", tls != null ? "smpps" : "smpp", systemId, host, port));
   }
 }

@@ -214,7 +214,7 @@ class SmppConnection implements Closeable {
 
   private void setupPipeline(
       final SocketChannel channel, final TlsConfig tls, final Charset defaultCharset) {
-    if (tls != null && tls.enabled()) {
+    if (tls != null) {
       addSslHandler(channel, tls);
     }
 

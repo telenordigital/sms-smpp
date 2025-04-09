@@ -115,7 +115,7 @@ public class SmppConnectionTest {
             "test",
             "test",
             "",
-            new TlsConfig(true, null, trustedCerts, null, null, "cloudhopper-test", true),
+            new TlsConfig(null, trustedCerts, null, null, "cloudhopper-test", true),
             false,
             100,
             false);

@@ -65,8 +65,10 @@ public class SmppConnectionTester {
             systemId,
             password,
             systemType,
-            new TlsConfig(
-                ssl, SmppConnectionConfig.SslProvider.OPENSSL, null, null, null, host, true),
+            ssl
+                ? new TlsConfig(
+                    SmppConnectionConfig.SslProvider.OPENSSL, null, null, null, host, true)
+                : null,
             false,
             10,
             false);
