@@ -39,6 +39,7 @@ import com.telenordigital.sms.smpp.SmppServerExtension.InvalidSequenceException;
 import com.telenordigital.sms.smpp.config.BindType;
 import com.telenordigital.sms.smpp.config.DefaultEncoding;
 import com.telenordigital.sms.smpp.config.SmppConnectionConfig;
+import com.telenordigital.sms.smpp.config.TlsConfig;
 import com.telenordigital.sms.smpp.pdu.SubmitSm;
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -114,7 +115,7 @@ public class SmppConnectionTest {
             "test",
             "test",
             "",
-            null,
+            new TlsConfig(true, null, trustedCerts, null, null, "cloudhopper-test", true),
             false,
             100,
             false);
