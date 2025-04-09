@@ -190,6 +190,8 @@ class SmppConnection implements Closeable {
         sslContext
             .endpointIdentificationAlgorithm("HTTPS")
             .serverName(new SNIHostName(tls.expectedServerHostname()));
+      } else {
+        sslContext.endpointIdentificationAlgorithm(null);
       }
 
       if (tls.trustedCerts() != null) {
