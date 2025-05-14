@@ -39,6 +39,7 @@ import com.telenordigital.sms.smpp.SmppServerExtension.InvalidSequenceException;
 import com.telenordigital.sms.smpp.config.BindType;
 import com.telenordigital.sms.smpp.config.DefaultEncoding;
 import com.telenordigital.sms.smpp.config.SmppConnectionConfig;
+import com.telenordigital.sms.smpp.config.TlsConfig;
 import com.telenordigital.sms.smpp.pdu.SubmitSm;
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -91,12 +92,8 @@ public class SmppConnectionTest {
             "test",
             "test",
             "",
-            false,
             null,
             false,
-            null,
-            null,
-            null,
             100,
             false);
     final var trustedCerts =
@@ -118,12 +115,8 @@ public class SmppConnectionTest {
             "test",
             "test",
             "",
-            true,
-            null,
+            new TlsConfig(null, trustedCerts, null, null, "cloudhopper-test", true),
             false,
-            trustedCerts,
-            null,
-            null,
             100,
             false);
 
@@ -386,12 +379,8 @@ public class SmppConnectionTest {
             "test",
             "test",
             "",
-            false,
             null,
             false,
-            null,
-            null,
-            null,
             100,
             false);
     try (var connection = new SmppConnection(idleConfig, moHandler, drHandler)) {
@@ -421,12 +410,8 @@ public class SmppConnectionTest {
             "test",
             "test",
             "",
-            false,
             null,
             false,
-            null,
-            null,
-            null,
             100,
             false);
     try (var connection = new SmppConnection(idleConfig, moHandler, drHandler)) {
@@ -581,12 +566,8 @@ public class SmppConnectionTest {
             "test",
             "test",
             "",
-            false,
             null,
             false,
-            null,
-            null,
-            null,
             2,
             false);
     try (var connection = new SmppConnection(smallWindow, moHandler, drHandler)) {
@@ -640,12 +621,8 @@ public class SmppConnectionTest {
             "test",
             "test",
             "",
-            false,
             null,
             false,
-            null,
-            null,
-            null,
             100,
             false);
     try (var connection = new SmppConnection(lowTimeout, moHandler, drHandler)) {
@@ -709,12 +686,8 @@ public class SmppConnectionTest {
             "test",
             "test",
             "",
-            false,
             null,
             false,
-            null,
-            null,
-            null,
             100,
             false);
 
@@ -762,12 +735,8 @@ public class SmppConnectionTest {
             "test",
             "don't accept me for the first time",
             "",
-            false,
             null,
             false,
-            null,
-            null,
-            null,
             100,
             false);
 
