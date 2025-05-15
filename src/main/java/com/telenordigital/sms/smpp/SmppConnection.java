@@ -161,6 +161,7 @@ class SmppConnection implements Closeable {
         stateChange(SmppState.INACTIVE);
       }
 
+      // don't reconnect if connection is being closed
       if (state != SmppState.CLOSING && state != SmppState.CLOSED) {
         scheduleReconnect();
       } else {
