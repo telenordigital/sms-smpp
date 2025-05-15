@@ -69,6 +69,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 class SmppConnection implements Closeable {
+
   private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
   private static final int MAX_SMPP_FRAME_LENGTH = 64 * 1024; // 64K based on the spec
 
@@ -115,6 +116,7 @@ class SmppConnection implements Closeable {
   }
 
   class ConnectionHandler extends ChannelInboundHandlerAdapter {
+
     private Bind createBind() {
       final var command =
           switch (config.bindType()) {
@@ -159,7 +161,11 @@ class SmppConnection implements Closeable {
         stateChange(SmppState.INACTIVE);
       }
 
-      scheduleReconnect();
+      if (state != SmppState.CLOSING && state != SmppState.CLOSED) {
+        scheduleReconnect();
+      } else {
+        LOG.debug("Skip reconnecting, connection is closing");
+      }
     }
 
     @Override
