@@ -38,6 +38,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 class InboundPduHandler extends MessageToMessageDecoder<RequestPdu<?>> {
+
   private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private final SmppConnection parent;
@@ -130,8 +131,7 @@ class InboundPduHandler extends MessageToMessageDecoder<RequestPdu<?>> {
     if (!future.isDone()) {
       futures.put(deliverSm, future);
     } else {
-      LOG.warn(
-          "deliver_sm handled on the event thread. Should not happened in prod! {}", deliverSm);
+      LOG.info("deliver_sm was ignored or may be handled on the event thread {}", deliverSm);
     }
   }
 
