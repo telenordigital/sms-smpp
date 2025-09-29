@@ -60,7 +60,7 @@
     <!-- plugins -->
     <compiler-plugin.version>3.13.0</compiler-plugin.version>
     <enforcer-plugin.version>3.5.0</enforcer-plugin.version>
-    <spotless-plugin.version>2.43.0</spotless-plugin.version>
+    <spotless-plugin.version>3.0.0</spotless-plugin.version>
     <surefire-plugin.version>3.3.0</surefire-plugin.version>
     <license-plugin.version>2.4.0</license-plugin.version>
     <source-plugin.version>3.3.1</source-plugin.version>
